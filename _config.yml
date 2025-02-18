@@ -1,4 +1,4 @@
-title: Hanjun's Blog1
+title: Hanjun's Blog2
 description: A starter template for a Jeykll site using the Just the Docs theme!
 theme: just-the-docs
 
@@ -6,3 +6,15 @@ url: https://hanjun0126.github.io
 
 aux_links:
   GitHub: https://github.com/hanjun0126
+
+search_enabled: false
+
+search:
+  heading_level: 2
+  preview: 3
+  preview_words_before: 5
+  preview_words_after: 10
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: false
+  focus_shortcut_key: k
