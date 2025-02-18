@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Computer Vision
+title: CV
 nav_order: 3.1
 parent: paper review
 permalink: '3'

@@ -2,8 +2,9 @@
 layout: default
 title: cnn
 nav_order: 1
-parent: paper review
-permalink: /docs/paper review
+grand_parent: paper review
+parent: CV
+permalink: /docs/paper review/CV
 ---
 
 #cnn
