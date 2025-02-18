@@ -1,7 +1,7 @@
 ---
 layout: default
 title: robot
-nav_order: 1
+nav_order: 2.1
 parent: Project
 permalink: /docs/Project
 ---

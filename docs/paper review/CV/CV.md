@@ -1,9 +1,7 @@
 ---
 layout: default
 title: Computer Vision
-nav_order: 3
-has_children: true
-permalink: /docs/paper review/CV
+nav_order: 3.1
 ---
 
 #computer vision
