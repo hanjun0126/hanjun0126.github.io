@@ -1,7 +1,7 @@
 ---
 layout: default
 title: menu2
-nav_order: 2
+nav_order: 4
 ---
 
 #Menu2

@@ -1,4 +1,4 @@
-title: Hanjun's Blog
+title: Hanjun's Blog3
 description: A starter template for a Jeykll site using the Just the Docs theme!
 theme: just-the-docs
 
@@ -18,3 +18,5 @@ search:
   rel_url: true
   button: false
   focus_shortcut_key: k
+
+color_scheme: dark
