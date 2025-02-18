@@ -2,6 +2,7 @@
 layout: default
 title: NLP
 nav_order: 3.2
+parent: paper review
 has_children: true
 permalink: /docs/paper review/NLP
 ---

@@ -2,6 +2,8 @@
 layout: default
 title: Computer Vision
 nav_order: 3.1
+parent: paper review
+permalink: '3'
 ---
 
 #computer vision
