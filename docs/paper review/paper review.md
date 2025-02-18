@@ -1,6 +1,6 @@
 ---
 layout: default
-title: paper_review_page
+title: paper review
 nav_order: 2
 has_children: true
 permalink: /docs/paper review
@@ -11,3 +11,6 @@ permalink: /docs/paper review
 
 Menu2 test
 {: .fs-6 .fw-300 }
+
+#paper Review
+{: .fs-3 .fw-200 }
