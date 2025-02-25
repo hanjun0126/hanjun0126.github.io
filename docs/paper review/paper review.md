@@ -3,7 +3,6 @@ layout: default
 title: paper review
 nav_order: 3
 has_children: true
-permalink: /docs/paper review
 ---
 
 #paper_review

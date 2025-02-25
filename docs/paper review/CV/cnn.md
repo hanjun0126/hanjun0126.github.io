@@ -4,7 +4,6 @@ title: cnn
 nav_order: 1
 grand_parent: paper review
 parent: CV
-permalink: /docs/paper review/CV/cnn
 ---
 
 #cnn

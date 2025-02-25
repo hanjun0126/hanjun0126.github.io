@@ -3,7 +3,6 @@ layout: default
 title: NLP
 nav_order: 3.2
 parent: paper review
-permalink: /docs/paper review/NLP
 ---
 
 #nature language process

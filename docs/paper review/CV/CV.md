@@ -3,7 +3,6 @@ layout: default
 title: CV
 nav_order: 3.1
 parent: paper review
-permalink: /docs/paper review/CV
 ---
 
 #computer vision

@@ -4,7 +4,6 @@ title: Attention is all you need
 nav_order: 1
 grand_parent: paper review
 parent: NLP
-permalink: /docs/paper review/NLP/Attention is all you need
 ---
 
 # *Attention is all you need*
