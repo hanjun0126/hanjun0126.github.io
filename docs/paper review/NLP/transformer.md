@@ -44,3 +44,5 @@ parent: NLP
 
 
 
+<**center**><**img** src="../../../assets/images/transformer_model_architecture.png" width="50" height="50"></**center**>
+
