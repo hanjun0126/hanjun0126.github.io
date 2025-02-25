@@ -40,8 +40,6 @@ parent: NLP
 
 ## *3. Model Architecture*
 
-![model](../../../assets/images/transformer_model_architecture.png)
-
 
 
 
