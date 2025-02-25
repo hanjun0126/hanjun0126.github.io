@@ -1,8 +1,22 @@
-title: Just the Docs Template
-description: A starter template for a Jeykll site using the Just the Docs theme!
+title: Hanjun's Blog
+description: note
 theme: just-the-docs
 
-url: https://just-the-docs.github.io
+url: https://hanjun0126.github.io
 
 aux_links:
-  Template Repository: https://github.com/just-the-docs/just-the-docs-template
+  GitHub: https://github.com/hanjun0126
+
+color_scheme: dark
+
+search_enabled: true			# 검색창
+
+search:
+  heading_level: 2
+  preview: 3
+  preview_words_before: 5
+  preview_words_after: 10
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: false
+  focus_shortcut_key: k
