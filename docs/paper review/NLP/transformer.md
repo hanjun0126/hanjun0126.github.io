@@ -73,6 +73,10 @@ attention 함수는 벡터 **Q(query)**, **K(key)**, **V(value)** 로 출력 값
 
 $x + y = 1$
 
+$ x - 2 = 1$
+
+
+
 
 
 
