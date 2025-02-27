@@ -4,6 +4,7 @@ title: Attention is all you need
 nav_order: 1
 grand_parent: paper review
 parent: NLP
+use_math: true
 ---
 
 # Attention is all you need
@@ -70,7 +71,9 @@ attention 함수는 벡터 **Q(query)**, **K(key)**, **V(value)** 로 출력 값
 
 
 
-$x+y=1$
+$x + y = 1$
+
+
 
 
 
