@@ -83,8 +83,6 @@ $ 112 + 12 = 12$
 
 
 
-
-
 #### Multi-Head Attention
 
 
