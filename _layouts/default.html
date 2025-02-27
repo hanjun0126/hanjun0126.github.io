@@ -21,6 +21,11 @@
 <p class="p2"><span class="s1"></span><br></p>
 <p class="p1"><span class="s1">&lt;html lang="{{ site.lang | default: 'en-US' }}"&gt;</span></p>
 <p class="p1"><span class="s1">{% include head.html %}</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% if page.use_math %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% include mathjax_support.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% endif %}</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
 <p class="p1"><span class="s1">&lt;body&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;a class="skip-to-main" href="#main-content"&gt;Skip to main content&lt;/a&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% include icons/icons.html %}</span></p>
@@ -57,9 +62,6 @@
 <p class="p2"><span class="s1"></span><br></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% if site.mermaid %}</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% include components/mermaid.html %}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% endif %}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% if page.use_math %}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% include mathjax_support.html %}</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% endif %}</span></p>
 <p class="p1"><span class="s1">&lt;/body&gt;</span></p>
 <p class="p1"><span class="s1">&lt;/html&gt;</span></p>
