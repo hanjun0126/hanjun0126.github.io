@@ -64,12 +64,16 @@ attention 함수는 벡터 **Q(query)**, **K(key)**, **V(value)** 로 출력 값
 
 #### Scaled Dot-Product Attention
 
-입력 Q, K 는 d_k, V 는 d_v 의 차원을 가지고 Attention(Q, K, V) = softmax(QK^T/root(d_k))V 을 만족한다.
+입력 Q, K 는 d_k, V 는 d_v 의 차원을 가지고 
+$$
+Attention(Q, K, V) = softmax({QK^t\over\sqrt{d_K}})V
+$$
+을 만족한다.
 
-dot-product(multiplicative) attention<sup>[2](#footnote_2)</sup>에 scaling factor (1/root(d_k)) 를 추가한 알고리즘이고, 이를 scaled dot-product attention 이라고 부른다. 
-
-
-
+dot-product(multiplicative) attention<sup>[2](#footnote_2)</sup>에 scaling factor ${1\over\sqrt{d_K}}$ (1/root(d_k)) 를 추가한 알고리즘이고, 이를 scaled dot-product attention 이라고 부른다. 
+$$
+{1\over\sqrt{d_K}}
+$$
 root d_k 의 사용 이유
 
 
