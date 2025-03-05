@@ -70,13 +70,13 @@ Attention(Q, K, V) = softmax({QK^t\over\sqrt{d_K}})V
 $$
 을 만족한다.
 
-dot-product(multiplicative) attention<sup>[2](#footnote_2)</sup>에 scaling factor ${1\over\sqrt{d_K}}$ (1/root(d_k)) 를 추가한 알고리즘이고, 이를 scaled dot-product attention 이라고 부른다. 
+dot-product(multiplicative) attention<sup>[2](#footnote_2)</sup>에 scaling factor ${1\over\sqrt{d_K}}$
+
+${1\over\sqrt{d_K}}$ (1/root(d_k)) 를 추가한 알고리즘이고, 이를 scaled dot-product attention 이라고 부른다. 
 $$
 {1\over\sqrt{d_K}}
 $$
 root d_k 의 사용 이유
-
-
 
 <span style="font-size:70%"><a name="footnote_2">2</a>: additive attention<sup>[3](#footnote_3)</sup> 과 복잡성은 이론적으로 비슷하지만, 최적화 된 행렬 곱셈 코드를 사용하여 구현할 수 있기 때문에 더 빠르고, 공간 효율적이다.</span> 
 
