@@ -89,3 +89,5 @@ root d_k 의 사용 이유
 
 
 <img src="../../../assets/images/multi_head_attention.png" alt="scale_dot_product_attention" style="zoom:25%;" />
+
+확인
