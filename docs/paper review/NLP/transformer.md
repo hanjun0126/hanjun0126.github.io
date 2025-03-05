@@ -4,7 +4,6 @@ title: Attention is all you need
 nav_order: 1
 grand_parent: paper review
 parent: NLP
-use_math: true
 ---
 
 # Attention is all you need
@@ -65,21 +64,23 @@ attention 함수는 벡터 **Q(query)**, **K(key)**, **V(value)** 로 출력 값
 
 #### Scaled Dot-Product Attention
 
-입력 Q, K 는 d_k, V 는 d_v 의 차원을 가졌다. 
+입력 Q, K 는 d_k, V 는 d_v 의 차원을 가지고 Attention(Q, K, V) = softmax(QK^T/root(d_k))V 을 만족한다.
+
+dot-product(multiplicative) attention<sup>[2](#footnote_2)</sup>에 scaling factor (1/root(d_k)) 를 추가한 알고리즘이고, 이를 scaled dot-product attention 이라고 부른다. 
+
+
+
+root d_k 의 사용 이유
+
+
+
+<span style="font-size:70%"><a name="footnote_2">2</a>: additive attention<sup>[3](#footnote_3)</sup> 과 복잡성은 이론적으로 비슷하지만, 최적화 된 행렬 곱셈 코드를 사용하여 구현할 수 있기 때문에 더 빠르고, 공간 효율적이다.</span> 
+
+<span style="font-size:70%"><a name="footnote_3">3</a>: 단일 숨겨진 계층이 있는 feed-foward netowrk 를 사용하여 호환성 함수를 계산한다.</span>
+
+
 
 <img src="../../../assets/images/scale_dot_product_attention.png" alt="scale_dot_product_attention" style="zoom:25%;" />
-
-
-
-$x + y = 1$
-
-$ x - 2 = 1$
-
-$ 1 - 1 = 0 $
-
-$x+y = 1$
-
-$ 112 + 12 = 12$
 
 
 

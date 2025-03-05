@@ -1,47 +1,74 @@
----
-layout: table_wrappers
----
-
-<!DOCTYPE html>
-
-<html lang="{{ site.lang | default: 'en-US' }}">
-{% include head.html %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000; min-height: 14.0px}
+    span.s1 {font-kerning: none}
+  </style>
+</head>
 <body>
-  <a class="skip-to-main" href="#main-content">Skip to main content</a>
-  {% include icons/icons.html %}
-  {% if page.nav_enabled == true %}
-    {% include components/sidebar.html %}
-  {% elsif layout.nav_enabled == true and page.nav_enabled == nil %}
-    {% include components/sidebar.html %}
-  {% elsif site.nav_enabled != false and layout.nav_enabled == nil and page.nav_enabled == nil %}
-    {% include components/sidebar.html %}
-  {% endif %}
-  <div class="main" id="top">
-    {% include components/header.html %}
-    <div class="main-content-wrap">
-      {% include components/breadcrumbs.html %}
-      <div id="main-content" class="main-content">
-        <main>
-          {% if site.heading_anchors != false %}
-            {% include vendor/anchor_headings.html html=content beforeHeading="true" anchorBody="<svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><use xlink:href=\"#svg-link\"></use></svg>" anchorClass="anchor-heading" anchorAttrs="aria-labelledby=\"%html_id%\"" %}
-          {% else %}
-            {{ content }}
-          {% endif %}
-
-          {% if page.has_toc != false %}
-            {% include components/children_nav.html %}
-          {% endif %}
-        </main>
-        {% include components/footer.html %}
-      </div>
-    </div>
-    {% if site.search_enabled != false %}
-      {% include components/search_footer.html %}
-    {% endif %}
-  </div>
-
-  {% if site.mermaid %}
-    {% include components/mermaid.html %}
-  {% endif %}
+<p class="p1"><span class="s1">---</span></p>
+<p class="p1"><span class="s1">layout: table_wrappers</span></p>
+<p class="p1"><span class="s1">---</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;html lang="{{ site.lang | default: 'en-US' }}"&gt;</span></p>
+<p class="p1"><span class="s1">&lt;head&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% include head.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% include head/custom.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% if page.use_math %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{% include mathjax_support.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% endif %}</span></p>
+<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1">&lt;body&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;a class="skip-to-main" href="#main-content"&gt;Skip to main content&lt;/a&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% include icons/icons.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% if page.nav_enabled == true %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% include components/sidebar.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% elsif layout.nav_enabled == true and page.nav_enabled == nil %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% include components/sidebar.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% elsif site.nav_enabled != false and layout.nav_enabled == nil and page.nav_enabled == nil %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% include components/sidebar.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% endif %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div class="main" id="top"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% include components/header.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="main-content-wrap"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{% include components/breadcrumbs.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div id="main-content" class="main-content"&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;main&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>{% if site.heading_anchors != false %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{% include vendor/anchor_headings.html html=content beforeHeading="true" anchorBody="&lt;svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"&gt;&lt;use xlink:href=\"#svg-link\"&gt;&lt;/use&gt;&lt;/svg&gt;" anchorClass="anchor-heading" anchorAttrs="aria-labelledby=\"%html_id%\"" %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>{% else %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{{ content }}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>{% endif %}</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>{% if page.has_toc != false %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{% include components/children_nav.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>{% endif %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/main&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>{% include components/footer.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% if site.search_enabled != false %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{% include components/search_footer.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% endif %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</span></p>
+<p class="p2"><span class="s1"></span><br></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% if site.mermaid %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% include components/mermaid.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% endif %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% if page.use_math %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>{% include mathjax_support.html %}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{% endif %}</span></p>
+<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
+<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
 </body>
 </html>
