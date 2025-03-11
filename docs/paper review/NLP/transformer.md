@@ -70,13 +70,14 @@ Attention(Q, K, V) = softmax({QK^t\over\sqrt{d_K}})V
 $$
 을 만족한다.
 
-dot-product(multiplicative) attention<sup>[2](#footnote_2)</sup>에 scaling factor ${1\over\sqrt{d_K}}$
+dot-product(multiplicative) attention<sup>[2](#footnote_2)</sup>에 scaling factor(${1\over\sqrt{d_K}}$) 를 추가한 알고리즘이고, 이를 scaled dot-product attention 이라고 부른다. 
 
-${1\over\sqrt{d_K}}$ (1/root(d_k)) 를 추가한 알고리즘이고, 이를 scaled dot-product attention 이라고 부른다. 
 $$
 {1\over\sqrt{d_K}}
 $$
-root d_k 의 사용 이유
+<==scaling factor 의의==>
+
+dot-product attention 은 $QK^T$ 의 값이 커질 경우 $softmax$ 함수의 출력 확률이 0 또는 1에 근접해서 나온다. 이렇게 되면 Gradient Vanishing(기울기 소실) 문제가 발생한다. 이 문제는 차원($d_k$) 이 커질수록 $QK^T$ 의 원소가 많아져 내적 값이 커지므로 더 극명하게 나타난다. 이를 해결하기 위해 scaling factor 를 사용한다.
 
 <span style="font-size:70%"><a name="footnote_2">2</a>: additive attention<sup>[3](#footnote_3)</sup> 과 복잡성은 이론적으로 비슷하지만, 최적화 된 행렬 곱셈 코드를 사용하여 구현할 수 있기 때문에 더 빠르고, 공간 효율적이다.</span> 
 
