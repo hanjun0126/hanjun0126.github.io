@@ -56,7 +56,7 @@ position 이 뒤따르는 position 에 영향을 주는 것을 막기 위해 **m
 
 <p align="center"><img src="../../../assets/images/transformer_model_architecture.png" alt="model" style="zoom:25%;" /></P>
 
-
+---
 
 ### 3. 2. Attention
 
@@ -80,13 +80,23 @@ dot-product attention 은 $QK^T$ 의 값이 커질 경우 $softmax$ 함수의 �
 
 <p align="center"><img src="../../../assets/images/scale_dot_product_attention.png" alt="scale_dot_product_attention" style="zoom:25%;"/></p>
 
-
+---
 
 #### Multi-Head Attention
 
 {: .fs-3 .fw-250 }
 
 attention 을 한 번만 사용하는 것보다 여러 번 사용하여
+
+
+
+
+
+\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \text{head}_2, …, \text{head}_h) W^O
+
+각 **head**는 아래 연산을 수행해:
+
+\text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V)
 
 
 
