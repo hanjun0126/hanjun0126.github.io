@@ -42,9 +42,7 @@ parent: NLP
 
 ### 3. 1. Encoder and Decoder stacks
 
-#### Encoder
-
-{: .fs-3 .fw-250 }
+#### <p style="font-size:150%">Encoder</p>
 
 N = 6 인 동일한 layer 의 stack 으로 구성된다. 각각의 layer 는 첫 번째로 multi-head self-attention 을, 두 번째로 positionwise fully connected feed-foward network 로 구성된다. residual connection 을 각 layer 의 적용시키고, layer normalization 을 한다. 각각의 Layer 는 **LayerNorm(x + Sublayer(x))** 을 출력한다. d_model = 512
 
