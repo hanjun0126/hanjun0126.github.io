@@ -42,11 +42,11 @@ parent: NLP
 
 ### 3. 1. Encoder and Decoder stacks
 
-#### <p style="font-size:150%">Encoder</p>
+<p style="font-size:150%">Encoder</p>
 
 N = 6 인 동일한 layer 의 stack 으로 구성된다. 각각의 layer 는 첫 번째로 multi-head self-attention 을, 두 번째로 positionwise fully connected feed-foward network 로 구성된다. residual connection 을 각 layer 의 적용시키고, layer normalization 을 한다. 각각의 Layer 는 **LayerNorm(x + Sublayer(x))** 을 출력한다. d_model = 512
 
-#### Decoder
+<p style="font-size:150%">Decoder</p>
 
 N = 6 인 동일한 layer 의 stack 으로 구성된다. 인코더의 출력으로부터 multi-head attention 을 수행하기 위해 2 개의 추가적인 sub-layer 를 가진다. 각각의 Layer 는 **LayerNorm(x + Sublayer(x))** 을 출력한다. 
 
