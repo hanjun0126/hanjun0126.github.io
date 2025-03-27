@@ -1,14 +1,14 @@
 ---
 layout: default
-title: cnn
+title: ViT
 nav_order: 1
 grand_parent: paper review
 parent: CV
 ---
 
-#cnn
-{: .no_toc }
+# ViT
 
-## Table of contents
+[paper](https://arxiv.org/pdf/2010.11929)
 
-{: .no_toc . text-delta }
+## Abstract
+

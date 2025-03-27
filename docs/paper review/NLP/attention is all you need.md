@@ -1,14 +1,14 @@
----
 layout: default
 title: Attention is all you need
 nav_order: 1
 grand_parent: paper review
 parent: NLP
----
 
-# Attention is all you need 논문 리뷰
+# Attention is all you need 논문 리뷰[미완성]]
 
-[paper link](https://arxiv.org/pdf/1706.03762)
+쿼리키벨류 설명 및 파이썬 코드 필요
+
+[paper link](https://arxiv.org/pdf/1706.03762)	[Transformer 설명 참조 영상](https://www.youtube.com/watch?v=6s69XY025MU)
 
 ## abstract
 
@@ -34,17 +34,100 @@ parent: NLP
 
 <p style="font-size:125%">Encoder</p>
 
-N = 6 인 동일한 layer 의 stack 으로 구성된다. 각각의 layer 는 첫 번째로 multi-head self-attention 을, 두 번째로 positionwise fully connected feed-foward network 로 구성된다. residual connection 을 각 layer 의 적용시키고, layer normalization 을 한다. 각각의 Layer 는 **LayerNorm(x + Sublayer(x))** 을 출력한다. d_model = 512
+N = 6 인 동일한 layer 의 stack 으로 구성된다. 각각의 layer 는 첫 번째로 **multi-head self-attention** 을, 두 번째로 **positionwise fully connected feed-foward network** 로 구성된다. residual connection 을 각 layer 의 적용시키고, layer normalization 을 한다. 각각의 Layer 는 **LayerNorm(x + Sublayer(x))** 을 출력한다. d_model = 512
 
 <p style="font-size:125%">Decoder</p>
 
-N = 6 인 동일한 layer 의 stack 으로 구성된다. 인코더의 출력으로부터 multi-head attention 을 수행하기 위해 2 개의 추가적인 sub-layer 를 가진다. 각각의 Layer 는 **LayerNorm(x + Sublayer(x))** 을 출력한다. 
+N = 6 인 동일한 layer 의 stack 으로 구성된다. 인코더의 출력으로부터 **multi-head attention** 을 수행하기 위해 2 개의 추가적인 sub-layer 를 가진다. 각각의 Layer 는 **LayerNorm(x + Sublayer(x))** 을 출력한다. 
 
 position 이 뒤따르는 position 에 영향을 주는 것을 막기 위해 **masking** 을 사용한다. 이는 출력 임베딩이 하나의 position 으로 offset 된다는 사실이 position i 에 대한 예측은 보다 작은 position 의 알려진 출력에만 의존할 수 있다는 것을 보장한다.
 
-![img](https://jalammar.github.io/images/t/The_transformer_encoders_decoders.png)
-
 <p align="center"><img src="../../../assets/images/transformer_model_architecture.png" alt="model" style="zoom:25%;" /></P>
+
+```python
+class Transformer(nn.Module):
+	def __init__(self, encoder, decoder):
+    super(Transformer, self).__init__()
+    self.encoder = encoder
+    self.decoder = decoder
+    
+  def encode(self, x):
+		out = self.encoder(x)
+    return out
+  
+  def decode(self, z, c):
+    out = self.decode(z, c)
+    return out
+  
+  def forward(self, x, z):
+    c = self.encode(x)
+    y =. elf.decode(z, c)
+    return y
+```
+
+```python
+class Encoder(nn.Module):
+  def __init__(self, encoder_block, n_layer):
+    super(Encoder, self).__init__()
+    self.layers = []
+    for i in range(n_layer):
+      self.layers.append(copy.deepcopy(encoder_block))
+      
+  def forward(self, x):
+    out = x
+    for layer in self.layers:
+      out = layer(out)
+   	return out
+```
+
+```python
+class EncoderBlock(nn.Module):
+  def __init__(self, self_attention, position_ff):
+    super(EncoderBlock, self).__init()
+    self.self_attention = self_attention
+    self.postion_ff = position_ff
+    
+  def forward(self, x):
+    out = x
+    out = self.self_attention(out)
+    out = self.position_ff(out)
+    return out
+```
+
+```python
+class Decoder(nn.Module):
+  def __init__(self, decoder_block, n_layer):
+    super(Decoder, self).__init__()
+    self.n_layer = n_layer
+    self.layers = nn.ModuleList([copy.deepcopy(decoder_block) for _ in range(self.n_layer)])
+    
+  def forward(self, tgt, encoder_out, tgt_mask, src_tgt_mask):
+    out = tgt
+    for layer in self.layers:
+      out = layer(out, encoder_out, tgt_mask, src_tgt_mask)
+    return out
+```
+
+```python
+class DecoderBlock(nn.Module):
+  def __iinit__(self, self_attention, cross_attention, position_ff):
+    super(DecoderBlock, self).__init__()
+    self.self_attention = self_attention
+    self.cross_attention = cross_attention
+    self.position_ff = position_ff
+    self.residuals = [ResidualConnectionLayer() for _ in range(3)]
+    
+   def forward(self, tgt, encoder_out, tgt_mask, src_tgt_mask):
+     out = tgt
+     out = self.residuals[0](out, lambda out: self.self_attention(query=out, key=out, value=out, mask=tgt_mask))
+     out = self.residuals[1](out, lambda out: self.cross_attention(query=out, key=encoder_out, value=encoder_out, mask=src_tgt_mask))
+     out = self.residuals[2](out, self.position_ff)
+     return out
+```
+
+
+
+
 
 ---
 
@@ -181,6 +264,28 @@ PE_{(pos, 2i)} = \sin \left(\frac{pos}{10000^{2i/d_{\text{model}}}} \right), \sp
 PE_{(pos, 2i+1)} = \cos \left(\frac{pos}{10000^{2i/d_{\text{model}}}} \right)
 $$
 pos 는 단어의 위치(0, 1, 2, ...) 이고, i 는 차원 인덱스(0, 1, 2, ... , $d_{model}\over2$) 이다. **위치 정보를 일정한 패턴으로 벡터에 추가하여, 순서 정보를 학습 할 수 있게 만든다.** 또한 쉽게 사용할 수 있는 함수라는 장점이 있다.
+
+```python
+import torch, math
+from torch import nn
+
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model, max_len, dropout=0.1):
+        super().__init__()
+        self.dropout = nn.Dropout(p=dropout)
+
+        position = torch.arange(max_len).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2) * (-math.log(10000.0) / d_model)) # (1/10000(2i/d_model))
+
+        pe = torch.zeros(max_len, 1, d_model)
+        pe[:, 0, 0::2] = torch.sin(position * div_term) # 짝수 인덱스
+        pe[:, 0, 1::2] = torch.cos(position * div_term) # 홀수 인덱스
+        self.register_buffer("pe", pe) # 모델이 매개변수를 갱신하지 않도록 설정
+
+    def forward(self, x):
+        x = x + self.pe[: x.size(0)] # 입력 길이에 맞춰 필요한 위치 인코딩만 선택하여 더함.
+        return self.dropout(x)
+```
 
 ---
 
