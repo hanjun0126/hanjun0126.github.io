@@ -1,8 +1,12 @@
+---
 layout: default
 title: Attention is all you need
 nav_order: 1
 grand_parent: paper review
 parent: NLP
+---
+
+
 
 # Attention is all you need 논문 리뷰[미완성]]
 
