@@ -66,7 +66,7 @@ En_Ko.columns = ["En", "Ko"]
 
 ---
 
-이렇게 데이터 셋을 `DataFrame`으로 만들었다. 이 `En_Ko` 로부터 다시 허깅페이스 데이터 셋을 생성할 것이다.
+`pandas.core.frame.DataFrame` 구조의  `En_Ko` 를 허깅페이스 데이터셋(`datasets.arrow_dataset.Dataset`)으로 변경할 것이다.
 
 ```python
 from datasets import Dataset
@@ -74,11 +74,133 @@ from datasets import Dataset
 dataset = Dataset.from_pandas(En_Ko)
 ```
 
-
-
 ```
 Dataset({
     features: ['En', 'Ko'],
     num_rows: 1300000
 })
 ```
+
+이렇게 만들어진 `Dataset` 을 train, valid, test 데이터셋으로 나누어 줄 것이다. train 데이터는 120,000개, valid 데이터는 90,000개, test 데이터는 10,000개로 나눠주었다. 그리고 이들을  `tsv` 파일로 새롭게 저장해주면, 필요할때마다 이 파일들을 읽어 허깅페이스 데이터셋을 만들 수 있다.
+
+```python
+num_train, num_valid, num_test = 120000, 90000, 10000
+
+En_Ko_train = En_Ko.iloc[:num_train]
+En_Ko_valid = En_Ko.iloc[num_train:num_train+num_valid]
+En_Ko_test = En_Ko.iloc[-num_test:]
+
+En_Ko_train.to_csv("train.tsv", sep="\t", index=False)
+En_Ko_valid.to_csv("valid.tsv", sep="\t", index=False)
+En_Ko_test.to_csv("test.tsv", sep="\t", index=False)
+```
+
+허깅페이스 데이터셋으로 만들려면 아래처럼 정의한 `data_files` 를 `load_dataset` 에 넘기면 된다. 이때 `delimiter="\t"` 으로 지정해야 한다.
+
+```python
+from dayasets import load_dataset
+
+data_files = {"train": "train.tsv", "valid": "valid.tsv", "test": "test.tsv"}
+dataset =  load_dataset("csv", data_files=data_files, delimiter="\t")
+```
+
+`DatasetDict` 에 `train`, `valid`, `test` key로 각가 120만, 9만, 1만개의 문장이 저장된 것을 확인할 수 있다.
+
+```
+DatasetDict({
+    train: Dataset({
+        features: ['En', 'Ko'],
+        num_rows: 120000
+    })
+    valid: Dataset({
+        features: ['En', 'Ko'],
+        num_rows: 90000
+    })
+    test: Dataset({
+        features: ['En', 'Ko'],
+        num_rows: 10000
+    })
+})
+```
+
+이 데이터셋에서 개별 데이터에 대한 접근은 `[split][feature][row num]` 형태로 가능하다.
+
+```python
+print(dataset['train']['en'][:3], dataset['train']['ko'][:3])
+```
+
+```
+["Skinner's reward is mostly eye-watering.", 'Even some problems can be predicted.', 'Only God will exactly know why.']
+['스키너가 말한 보상은 대부분 눈으로 볼 수 있는 현물이다.', '심지어 어떤 문제가 발생할 건지도 어느 정도 예측이 가능하다.', '오직 하나님만이 그 이유를 제대로 알 수 있을 겁니다.']
+```
+
+
+
+
+
+## Model: Transformer
+
+시작에 앞서 모델을 구현하는 데 필요한 라이브러리를 먼저 선언한다.
+
+```python
+import torch
+import torch.nn as nn
+import math
+from matplotlib import pyplot as plt
+```
+
+### Embedding
+
+트랜스포머에 입력 데이터인 단어를 입력하기 위해서는 단어에 대해 두가지 전처리를 해야 하는데 하나는 **Embedding** 이고 다른 하나는 **Positional Encoding **이다. 
+
+```python
+class TokenEmbedding(nn.Module):
+    def __init__(self, vocab_size, emb_size):
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, emb_size)
+        self.emb_size = emb_size
+
+    def forward(self, tokens):
+        return self.embedding(tokens.long()) * math.sqrt(self.emb_size)
+```
+
+
+
+### PositionalEncoding
+
+위치 인코딩은 입력 시퀀스의 순서 정보를 모델에 전달하는 방법이다. 각 단어의 위치 정보를 나타내는 벡터를 더하여 임베딩 벡터에 위치 정보를 반영한다. 위치 인코딩 벡터는 $sin$ 함수와 $cos$ 함수를 사용해 생성되며, 이를 통해 임베딩 벡터와 위치 정보가 결합된 최종 입력 벡터를 생성한다.  **위치 인코딩 벡터를 추가함으로써 모델은 단어의 순서 정보를 학습할 수 있다**.
+
+위치 인코딩은 각 토큰의 위치를 각도로 표현해 $sin$ 함수(`pe[:, 0, 0::2] = torch.sin(position * div_term` )와 $cos$ 함수(`pe[:, 0, 1::2] = torch.cos(position * div_term)`)로 위치 인코딩 벡터를 계산한다. 이러한 계산 방법은 토큰의 위치마다 동일한 임베딩 벡터를 사용하지 않기 때문에 각 토큰의 위치 정보를 모델이 학습할 수 있다. 
+
+```python
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model, max_len, dropout=0.1):
+        super().__init__()
+        self.dropout = nn.Dropout(p=dropout)
+
+        position = torch.arange(max_len).unsqueeze(1)	# tensor([[0], [1], ... , [max_len-2], [max_len-1]]) 생성
+        div_term = torch.exp(torch.arange(0, d_model, 2) * (-math.log(10000.0) / d_model)) # (1/10000(2i/d_model))
+
+        pe = torch.zeros(max_len, 1, d_model)	# tensor([[[0] * max_len] * d_model])
+        pe[:, 0, 0::2] = torch.sin(position * div_term) # 짝수 인덱스
+        pe[:, 0, 1::2] = torch.cos(position * div_term) # 홀수 인덱스
+        self.register_buffer("pe", pe) # 모델이 매개변수를 갱신하지 않도록 설정
+
+    def forward(self, x):
+        x = x + self.pe[: x.size(0)] # 입력 길이에 맞춰 필요한 위치 인코딩만 선택하여 더함.
+        return self.dropout(x)
+```
+
+**code review**
+
+`PositionalEncoding` 클래스는 입력 **임베딩 차원(d_model)**과 **최대 시퀀스(max_len)**를 입력받는다. 입력 시퀀스의 위치마다 $sin$ 과 $cos$ 함수로 위치 인코딩을 계산한다.
+$$
+PE_{(pos, 2i)} = \sin \left(\frac{pos}{{10000^{\frac{2i}{d_{\text{model}}}}}} \right), \space
+PE_{(pos, 2i+1)} = \cos \left(\frac{pos}{10000^{\frac{2i}{d_{\text{model}}}}} \right)
+$$
+${\frac{1}{10000^{\frac{2i}{d_{\text{model}}}}}}$ 의 수식은 `torch.exp(torch.arange(0, d_model, 2) * (-math.log(10000.0) / d_model))` 으로 구현할 수 있다. 코드를 풀어쓰면 $\exp^{(2i*-\frac{\log_e{10^5}}{d_\text{model}})}$이다. 이는 $\exp^{\log_e{10000^{-\frac{2i}{d_{\text{model}}}}}}$ 이라 쓸 수 있고,  $\exp(\log(x)) = x$ 이므로 결과적으로 ${\frac{1}{10000^{\frac{2i}{d_{\text{model}}}}}}$ 으로 쓸 수 있다.
+
+`pe` 를 `pe[:, 0, 0::2]` 와 `pe[:, 0, 1::2]` 로 정의하여, 짝수 인덱스에서는 $sin$ 함수를 홀수 인덱스에서는 $cos$ 함수를 사용하여 
+
+`self.register_buffer("pe", pe)` 는 pe를 모델의 상수 버퍼로 등록한다. 이는 학습되진 않지만 모델 저장/로딩할 때 같이 저장된다.
+
