@@ -1,0 +1,52 @@
+---
+layout: default
+title: ViT
+nav_order: 1
+grand_parent: paper review
+parent: CV
+---
+
+# Vision Transformer 정리
+
+[An Image is worth 16x16 Words: Transformers for Image Recognition at Scale.](https://arxiv.org/pdf/2010.11929)
+
+## Abstract
+
+NLP task에서 Transformer는 상당한 성과를 이루고 있지만, Computer Vision task에서는 attention이 CNN과 결합시키거나 부분적으로 대체하는 방향으로만 발전해왔다. 논문에서는 CNN에 의존 없이도 Transformer만으로 image classification task에서 좋은 결과를 얻을 수 있음을 보여주고자 한다. Vision Transformer(ViT)는 적은 computing resources만으로도 convolution을 사용한 SOTA모델들과 비교하면 훌륭한 성능을 낼 수 있다고 한다.
+
+## Introduction
+
+NLP에서 지배적으로 쓰이는 Transformer를 CV에서 사용하기 위한 연구를 진행하였다. 필자들 이전에 연구들은 self-attention을 CNN에 결합시키거나 일부를 대체하는 형태였고, 크게 성과를 얻지는 못했다. 필자들은 이미지를 패치들로 나누고 각 패치를 NLP에서 사용되는 토큰처럼 활용하여 Transformer의 입력으로 주는 방향성으로 연구를 진행했다. Transformer는 CNN에 내제된 inductive bias가 없기에 대규모의 데이터가 아니면 기존의 ResNet 모델들보다 낮은 성능을 보였다. 하지만 대규모의 데이터셋에서 pretrain을 하고, 전이 학습을 했을 때는 SOTA에 근접하거나 이를 능가했다.
+
+---
+
+흔히들 아는 NLP분야에서 자주 쓰이는 Transformer는 self-attention 기반의 구조이다. 대규모 말뭉치로 pretrain을 하고 fine tuning하는 형태로 사용되고 있다. transformer의 계산 효율성과 확장성 덕분에, 100B 파라미터 이상의 크기를 가진 모델 또한 학습할 수 있게 됐다.
+
+하지만 CV에서는 convolutional 구조가 여전히 지배적이다. CNN계열의 구조들을 self-attention과 결합하거나 일부분을 대체하는 형태의 연구들이 진행됐었다. 후자의 모델들은 이론적으로는 효율적이지만, 특수한 attention 패턴들을 사용하기 때문에 최신 하드웨어 가속기에서 효과적으로 확장되지 못했다. 그렇기에 대규모 이미지 인식에서는 기본 ResNet 구조의 모델들이 여전히 SOTA에 있다.
+
+필자들은 가능한 최소한의 수정만으로 Transformer를 이미지에 직접 적용해 실험을 했다. 이를 위해 이미지를 패치들로 나누고 각 패치를 선형임베딩한 시퀀스들을 Transformer의 입력으로 주었다. 이미지 패치들은 NLP에서의 토큰과 같은 방식으로 처리된다. 이미지 분류 모델을 지도학습 방식으로 학습시켰다.
+
+이러한 모델들은 강력한 정규화(regularization)를 사용하지 않고, ImageNet과 같은 중간 규모의 데이터 셋으로 학습시켰을 때, 비슷한 크기의 ResNet모델들 보다 몇 퍼센트 포인트 낮은 비교적 보통의 정확도를 보여줬다. 이는 다소 실망스러운 결과처럼 보이지만, Transformer는 translation equivariance와 locality와 같은 CNN에 내제된 inductive biases를 가지고 있지 않다. 그러므로 충분하지 않은 양의 데이터를 가지고 학습했을 때, 일반화(generalize)를 제대로 하지 못한다. 그렇지만 대규모의 데이터셋(14M-300M)에서 모델을 훈련시켰을 때는 상황이 달라진다. 대규모의 학습은 inductive bias를 능가하는 것을 발견했다. Vit는 충분한 규모로 pretrain 되었을 때, 적은 데이터의 과제에 전이 학습됐을 때도 뛰어난 성능을 보여준다. 공개된 ImageNet-21K 데이터셋이나 JPT-300M 데이터셋으로 pretrain 됐을 때, ViT는 여러 이미지 인식 벤치마크에서 SOTA에 근접하거나 이를 능가한다. 특히 최고 성능 모델은 ImageNet에서 88.85%, ImageNet-Real에서 90.72%, CIFAR-100에서 94.55%의 정확도를 달성했다.
+
+## Related Work
+
+
+
+
+
+## Method
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
