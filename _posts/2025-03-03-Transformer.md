@@ -30,7 +30,7 @@ Paper : [Attention Is All You Need](https://arxiv.org/pdf/1706.03762)	[Transform
 
 **Self-attention** 은 Sequence 의 representation 을 계산하기 위해 단일 Sequencce 의 서로 다른 위치를 연관시키는 기법이다. **End-to-end memory** 는 **Recurrent attention** 기법을 기반으로 한다.
 
-<span style="font-size:70%"><a name="footnote_1">1</a>: RNN, LSTM, recurrent gated neural network</span> 
+<span style="font-size:70%"><a name="footnote_1">1</a>: RNN, LSTM, recurrent gated neural network</span>
 
 ***
 
