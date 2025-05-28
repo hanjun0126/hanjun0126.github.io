@@ -22,6 +22,6 @@ def run_git_command(command):
 
 # 4. push 수행 
 run_git_command(f"git add -A")
-run_git_command('git commit -m "auto update"')
+run_git_command('git commit -m "chore: auto update"')
 run_git_command("git push")
 

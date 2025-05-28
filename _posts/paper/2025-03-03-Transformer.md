@@ -1,15 +1,3 @@
----
-title: Attention Is All You Need 공부
-author: Hanjun
-date: 2025-03-03
-category: Jekyll
-layout: post
-mermaid: true
-
----
-
-
-
 # Attention is all you need 논문 리뷰[미완성]]
 
 쿼리키벨류 설명 및 파이썬 코드 필요
