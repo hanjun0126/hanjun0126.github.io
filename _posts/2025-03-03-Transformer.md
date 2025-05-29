@@ -140,7 +140,7 @@ Attention 함수는 입력 단어들을 변환한 벡터 **Q(query)**, **K(key)*
 
 입력 Q, K 는 d_k, V 는 d_v 의 차원을 가지고 $Attention(Q, K, V) = softmax({QK^t\over\sqrt{d_K}})V$ 을 만족한다. 기존의 Dot-Product(multiplicative) Attention에 Scaling factor(${1\over\sqrt{d_K}}$) 가 추가된 알고리즘이고, 이를 Scaled Dot-Product Attention 이라고 부른다. 
 
-Dot-Product Attention 은 $QK^T$ 의 값이 커질 경우 Softmax 함수의 출력 확률이 0 또는 1에 근접해서 나온다. 이렇게 되면 **Gradient Vanishing(기울기 소실)** 문제가 발생한다. 이 문제는 차원($d_k$) 이 커질수록 $QK^T$ 의 원소가 많아져 내적 값이 커지므로 더 극명하게 나타난다. 이를 해결하기 위해 Scaling factor 를 사용한다.
+Dot-Product Attention 은 $QK^T$ 의 값이 커질 경우 Softmax 함수의 출력 확률이 0 또는 1에 근접해서 나온다. 이렇게 되면 **Gradient Vanishing(기울기 소실)** 문제가 발생 한다. 이 문제는 차원($d_k$) 이 커질수록 $QK^T$ 의 원소가 많아져 내적 값이 커지므로 더 극명하게 나타난다. 이를 해결하기 위해 Scaling factor 를 사용한다.
 
 <img src="../assets/img/transformer/scale_dot_product_attention.png" alt="selfattention" style="zoom:30%;" />
 
