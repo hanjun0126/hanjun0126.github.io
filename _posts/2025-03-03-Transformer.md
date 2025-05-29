@@ -43,7 +43,7 @@ N = 6 인 동일한 layer 의 stack 으로 구성된다. 인코더의 출력으�
 
 position 이 뒤따르는 position 에 영향을 주는 것을 막기 위해 **masking** 을 사용한다. 이는 출력 임베딩이 하나의 position 으로 offset 된다는 사실이 position i 에 대한 예측은 보다 작은 position 의 알려진 출력에만 의존할 수 있다는 것을 보장한다.
 
-<img src="/assets/img/transformer/transformer_model_architecture.png" alt="Transformer" style="zoom:20%;" />
+<img src="../assets/img/transformer/transformer_model_architecture.png" alt="Transformer" style="zoom:20%;" />
 
 ```python
 class Transformer(nn.Module):
@@ -142,7 +142,7 @@ Attention 함수는 입력 단어들을 변환한 벡터 **Q(query)**, **K(key)*
 
 Dot-Product Attention 은 $QK^T$ 의 값이 커질 경우 Softmax 함수의 출력 확률이 0 또는 1에 근접해서 나온다. 이렇게 되면 **Gradient Vanishing(기울기 소실)** 문제가 발생 한다. 이 문제는 차원($d_k$) 이 커질수록 $QK^T$ 의 원소가 많아져 내적 값이 커지므로 더 극명하게 나타난다. 이를 해결하기 위해 Scaling factor 를 사용한다.
 
-<img src="/assets/img/transformer/scale_dot_product_attention.png" alt="selfattention" style="zoom:30%;" />
+<img src="../assets/img/transformer/scale_dot_product_attention.png" alt="selfattention" style="zoom:30%;" />
 
 ---
 
@@ -174,7 +174,7 @@ $W_i^Q$, $W_i^K$, $W_i^V$ 는 각 Head에 적용되는 학습 가능한 가중�
 
 결국 Transformer 에서 Multi-Head attention 은 Encoder 에서는 **입력 문장의 각 단어가 다른 단어와의 관계를 학습(Self-Attention)**한다. Decoder 에서는 encoder 에서 얻은 정보를 활용해 **새로운 단어를 생성(Cross-Attention)**하고, 이미 **생성된 단어와의 관계를 학습(Masked Self-Attention)**한다.
 
-<img src="/assets/img/transformer/multi_head_attention.png" alt="MSA" style="zoom:30%;" />
+<img src="../assets/img/transformer/multi_head_attention.png" alt="MSA" style="zoom:30%;" />
 
 ---
 
