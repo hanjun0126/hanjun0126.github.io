@@ -5,8 +5,6 @@ tags: [NLP]
 math: true
 ---
 
-
-
 # Attention is all you need 논문 리뷰[미완성]]
 
 쿼리키벨류 설명 및 파이썬 코드 필요
@@ -23,11 +21,11 @@ Paper : [Attention Is All You Need](https://arxiv.org/pdf/1706.03762)	[Transform
 
 ## Introduction
 
-**Recurrent 모델<sup>[1](#footnote_1)</sup>들은 일반적으로 입력과 출력 Sequence 위치에 따라 계산을 수행**한다. 본질적으로 이런 순차적인 계산 특성은 **병렬화를 배제**하는데 이는 Sequence 의 길이가 길어질수록 치명적이다. &rarr; sequential computation 의 제약이 있다. 반면 **Attention** 기법은 입력과 출력 Sequence 의 **거리에 상관없이 종속성을 모델링**할 수 있다. 새롭게 제안하는 **Transformer** 구조는 순환 신경망을 배제하고 오로지 **Attention 만 사용하기에 입력과 출력의 global 의존성을 도출할 수 있다.**
+**Recurrent 모델들은 일반적으로 입력과 출력 Sequence 위치에 따라 계산을 수행**한다. 본질적으로 이런 순차적인 계산 특성은 **병렬화를 배제**하는데 이는 Sequence 의 길이가 길어질수록 치명적이다. &rarr; sequential computation 의 제약이 있다. 반면 **Attention** 기법은 입력과 출력 Sequence 의 **거리에 상관없이 종속성을 모델링**할 수 있다. 새롭게 제안하는 **Transformer** 구조는 순환 신경망을 배제하고 오로지 **Attention 만 사용하기에 입력과 출력의 global 의존성을 도출할 수 있다.**
 
 **Self-attention** 은 Sequence 의 representation 을 계산하기 위해 단일 Sequencce 의 서로 다른 위치를 연관시키는 기법이다. **End-to-end memory** 는 **Recurrent attention** 기법을 기반으로 한다.
 
-<span style="font-size:70%"><a name="footnote_1">1</a>: RNN, LSTM, recurrent gated neural network</span>
+
 
 ***
 
@@ -45,7 +43,7 @@ N = 6 인 동일한 layer 의 stack 으로 구성된다. 인코더의 출력으�
 
 position 이 뒤따르는 position 에 영향을 주는 것을 막기 위해 **masking** 을 사용한다. 이는 출력 임베딩이 하나의 position 으로 offset 된다는 사실이 position i 에 대한 예측은 보다 작은 position 의 알려진 출력에만 의존할 수 있다는 것을 보장한다.
 
-<img src="../assets/img/transformer/transformer_model_architecture.png" alt="Transformer" style="zoom:30%;" />
+<img src="../assets/img/transformer/transformer_model_architecture.png" alt="Transformer" style="zoom:20%;" />
 
 ```python
 class Transformer(nn.Module):
@@ -140,15 +138,11 @@ Attention 함수는 입력 단어들을 변환한 벡터 **Q(query)**, **K(key)*
 
  <p style="font-size:125%">Scaled Dot-Product Attention</p>
 
-입력 Q, K 는 d_k, V 는 d_v 의 차원을 가지고 $Attention(Q, K, V) = softmax({QK^t\over\sqrt{d_K}})V$ 을 만족한다. 기존의 Dot-Product(multiplicative) Attention<sup>[2 ](#footnote_2)</sup>에 Scaling factor(${1\over\sqrt{d_K}}$) 가 추가된 알고리즘이고, 이를 Scaled Dot-Product Attention 이라고 부른다. 
+입력 Q, K 는 d_k, V 는 d_v 의 차원을 가지고 $Attention(Q, K, V) = softmax({QK^t\over\sqrt{d_K}})V$ 을 만족한다. 기존의 Dot-Product(multiplicative) Attention에 Scaling factor(${1\over\sqrt{d_K}}$) 가 추가된 알고리즘이고, 이를 Scaled Dot-Product Attention 이라고 부른다. 
 
-Dot-Product Attention 은 $QK^T$ 의 값이 커질 경우 Softmax 함수의 출력 확률이 0 또는 1에 근접해서 나온다. 이렇게 되면 **Gradient Vanishing(기울기 소실)** 문제가 발생한다. 이 문제는 차원($d_k$) 이 커질수록 $QK^T$ 의 원소가 많아져 내적 값이 커지므로 더 극명하게 나타난다. 이를 해결하기 위해 Scaling factor** 를 사용한다.
+Dot-Product Attention 은 $QK^T$ 의 값이 커질 경우 Softmax 함수의 출력 확률이 0 또는 1에 근접해서 나온다. 이렇게 되면 **Gradient Vanishing(기울기 소실)** 문제가 발생한다. 이 문제는 차원($d_k$) 이 커질수록 $QK^T$ 의 원소가 많아져 내적 값이 커지므로 더 극명하게 나타난다. 이를 해결하기 위해 Scaling factor 를 사용한다.
 
 <img src="../assets/img/transformer/scale_dot_product_attention.png" alt="selfattention" style="zoom:30%;" />
-
-<span style="font-size:70%"><a name="footnote_2">2</a>: Additive Attention<sup>[3](#footnote_3)</sup> 과 복잡성은 이론적으로 비슷하지만, 최적화 된 행렬 곱셈 코드를 사용하여 구현할 수 있기 때문에 더 빠르고, 공간 효율적이다.</span> 
-
-<span style="font-size:70%"><a name="footnote_3">3</a>: 단일 숨겨진 계층이 있는 Feed-Foward Netowrk 를 사용하여 호환성 함수를 계산한다.</span>
 
 ---
 
