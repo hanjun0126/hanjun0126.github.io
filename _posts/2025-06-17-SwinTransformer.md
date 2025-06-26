@@ -52,7 +52,7 @@ $$
 $$
 
 $$
-\mathbf{{z^l}=MLP(LN(\hat{z}^l))+\hat{z}^l}
+\mathbf{{z^l}}=\mathbf{MLP(LN(\hat{z}^l))+\hat{z}^l}
 $$
 
 $$
