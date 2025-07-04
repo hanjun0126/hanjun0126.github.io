@@ -421,7 +421,7 @@ class SwinTransformerBlock(nn.Module):
             if not self.fused_window_process:
                 shifted_x = torch.roll(x, shifts=(-self.shift_size, -self.shift_size), dims=(1, 2))
                 # partition windows
-                x_windows = window_partition(shifted_x, self.window_size)  # nW*B, window_size, window_size, C
+                x_windows = window_partition(shifted_x, self.window_size)  # nW*B, window_size, window_size, C [64, 7, 7, 96]
             else:
                 x_windows = WindowProcess.apply(x, B, H, W, C, -self.shift_size, self.window_size)
         else:
