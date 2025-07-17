@@ -19,30 +19,165 @@ Author: Ze Liu, Yutong Lin, Yue Cao, Han Hu, Yixuan Wei, Zheng Zhang, Stephen Li
 
 자연어 처리 분야에서 제안된 트랜스포머를 컴퓨터 비전에 적용시키는 것은 문장에 비해 이미지가 갖고 있는 높은 해상도와 같은 두 도메인의 차이로 인해 어려운 과제이다. 이러한 차이를 극복하기 위해 필자들은 Shifted Window를 사용한 hierarchical Transformer(계층적 트랜스포머)를 제안한다.
 
-
-
 1.   이미지들은 다양한 크기를 갖고 있다. 기존 ViT의 토큰은 고정된 크기이다. 이는 이미지 처리 분야에 적합하지 않다. 
 2.   이미지의 해상도는 문장에 비해 데이터의 크기가 상당히 크다. 이미지 크기에 따라 이차방정식의 형태로 계산이 이루어 지기에 트랜스포머가 이를 다루기 힘들다.
 
-이러한 문제를 해결하기 위해서 저자들은 트랜스포머를 범용적으로 사용할 수 있는 Swin Transformer 구조를 제안한다. 계층적 특징 맵으로 설계되었고, 이미지 크기에 따른 선형 계산 복잡도를 가졌다. 작은 크기의 패치들을 계층이 깊어질수록 이웃 패치들과 결합하여 출력을 만든다. 이러한 계층적인 구조는 Swin Transformer가 FPN 또는 U-Net처럼 세밀한 예측에 계층적인 특징맵의 이점을 손쉽게 사용할 수 있다.
+이러한 문제를 해결하기 위해서 저자들은 트랜스포머를 범용적으로 사용할 수 있는 Swin Transformer 구조를 제안한다. **Figure 1.**에서 볼 수 있듯이 모델은 계층적 특징 맵으로 설계되었고, 이미지 크기에 따른 선형 계산 복잡도를 가졌다. 작은 크기의 패치들을 계층이 깊어질수록 이웃 패치들과 결합하여 출력을 만든다. 이러한 계층적인 구조는 Swin Transformer가 FPN 또는 U-Net처럼 세밀한 예측에 계층적인 특징맵의 이점을 손쉽게 사용할 수 있다. 선형 계산 복잡도는 겹치지 않는 지역적인 셀프 어텐션으로부터 계산되는데, 각 윈도우의 패치 수는 고정되어 있기에 이미지 크기에 비례한다. 이러한 이점은 Swin Transformer가 기존 ViT보다 여러 비전 과제에서 범용적인 모델에 적합하다는 것을 보여준다. 
 
-
+**Figure 1.** (a) 제안된 Swin Transformer는 이미지 패치들을 결합하는 계층적 특징맵을 설계한다. (b) 기존 ViT는 단일 해상도에서 특징맵을 설계한다.
 
 <img src="../assets/img/Swin_Transformer/figure1.png" alt="figure1" style="zoom:40%;" />
 
+>   *Shifted window* approach has much lower latency than the *sliding window* method, yet is similar in modeling power.
 
+Swin Transformer에는 연속된 셀프 어텐션 계층에서 윈도우가 이동하는 "shift" 개념이 있다. 이를 Swin Transformer 블록에서 볼 수 있다. 블록에는 2개의 연속적인 셀프 어텐션 계층이 있고, 선행 계층은 기존 ViT계층과 유사하지만, 뒤따르는 계층은 **Figure 2.**처럼 윈도우의 이동이 있다. 이러한 방법들은 모든 query 패치들이 같은 key를 공유하기에 하드웨어의 메모리 접근에 용이한 장점이 있다. 모델의 성능 향상을 **Table 4.**에서 확인할 수 있다. 이전의 sliding window 기반의 self-attention을 사용하는 것은 key와 query 의 크기가 다르기 때문에 하드웨어에서 낮은 지연시간을 가지는 데 어려움이 있었다. 반면에 shift를 사용하는 방식은 비슷한 성능임에도 메모리에 빠른 접근이 가능하다.
 
-
-
-**Figure 2.**
+**Figure 2.** Swin Transformer 블록에서 사용되는 "shift" 개념이 적용된 윈도우.
 
 <img src="../assets/img/Swin_Transformer/figure2.png" alt="figure2" style="zoom:50%;" />
 
+이러한 저자들의 Swin Transformer는 분류, 탐지, 세분화 작업에서 ViT/DeiT와 ResNe(X)t 모델들을 비슷한 지연시간을 가지고 성능 면에서 상당히 앞선 결과를 달성하였다.
+
+## Method
+
+### Overall Architecture
+
+Swin Transformer Tiny version 을 기준으로 모델을 코드와 함께 설명하겠다.
+
+**Figure 3. **Tiny version
+
+<img src="../assets/img/Swin_Transformer/figure3_mark.png" alt="figure3" style="zoom:40%;" />
+
+1.   **Patch Partition**.
+
+     입력으로 들어오는 RGB 이미지(224x224)는 4x4 크기의 패치들로 분리된다. 이때 입력 데이터의 배치 크기는 1이라고 가정한다. 이미지는 56x56=3,136개 패치로 분리된다. 임베딩 차원은 96으로 설정되었다.
+
+     ```python
+     self.proj = nn.Conv2d(in_chans, embed_dim, kernel_size=patch_size, stride=patch_size)
+     x = self.proj(x).flatten(2).transpose(1, 2)
+     ```
+
+     위 코드는 패치 임베딩에 핵심 부분이다. 전체적인 과정은 [B,C,H,W]의 입력 데이터가 들어오면 이를 기존의 RGB 채널을 임베딩 채널로 투영함과 동시에 픽셀 단위에 데이터를 패치 단위로 묶어준다. 즉, 데이터는 [B,embed_dim,Ph,Pw]의 데이터가 된다. 최종적으로는 입력 데이터[배치 크기, 채널 수, 세로, 가로]가 [배치 크기, 패치 개수, 임베딩 채널 수]로 변환됐다.
+
+     <img src="../assets/img/Swin_Transformer/patchembed.png" alt="patchembedding" style="zoom:25%;" />
+
+     **Code**
+
+     ```python
+     class PatchEmbed(nn.Module):
+         r""" Image to Patch Embedding
+     
+         Args:
+             img_size (int): Image size.  Default: 224.
+             patch_size (int): Patch token size. Default: 4.
+             in_chans (int): Number of input image channels. Default: 3.
+             embed_dim (int): Number of linear projection output channels. Default: 96.
+             norm_layer (nn.Module, optional): Normalization layer. Default: None
+         """
+     
+         def __init__(self, img_size=224, patch_size=4, in_chans=3, embed_dim=96, norm_layer=None):
+             super().__init__()
+             img_size = to_2tuple(img_size) # 224->tuple(224, 224)
+             patch_size = to_2tuple(patch_size) # 4->tuple(4, 4)
+             patches_resolution = [img_size[0] // patch_size[0], img_size[1] // patch_size[1]] # 패치 해상도는 [56, 56]
+             self.img_size = img_size
+             self.patch_size = patch_size
+             self.patches_resolution = patches_resolution
+             self.num_patches = patches_resolution[0] * patches_resolution[1] # 56x56=3136
+     
+             self.in_chans = in_chans # RGB=3
+             self.embed_dim = embed_dim # 96
+     
+             self.proj = nn.Conv2d(in_chans, embed_dim, kernel_size=patch_size, stride=patch_size)
+             if norm_layer is not None:
+                 self.norm = norm_layer(embed_dim)
+             else:
+                 self.norm = None
+     
+         def forward(self, x):
+             B, C, H, W = x.shape
+             # FIXME look at relaxing size constraints
+             assert H == self.img_size[0] and W == self.img_size[1], \
+                 f"Input image size ({H}*{W}) doesn't match model ({self.img_size[0]}*{self.img_size[1]})."
+             x = self.proj(x).flatten(2).transpose(1, 2)  # x=[B,C,H,W]->proj=[B,embed_dim,Ph,Pw]->flatten=[B,embed_dim,Ph*Pw]->transpose=[B,Ph*Pw,embed_dim]
+             if self.norm is not None:
+                 x = self.norm(x)
+             return x # [B,Ph*Pw,embed_dim] e.g. [1, 3136, 96]
+     ```
+
+2.   **Linear Embedding**
+
+     각 패치의 차원은 4x4x3=48이 된다. 다만, 이는 선형 임베딩 과정을 통해 96으로 늘어난다.
+
+3.   **PatchMerging**
+
+     네트워크의 계층이 깊어질수록 패치 수는 줄어들고, 차원 수는 2배로 늘어난다. 이는 PatchMerging 계층에서 2x2 크기의 영역에서 인접한 패치들끼리 concat 시키므로, 기존의 이미지에서 추출한 패치 56개가 28개로 줄어들기 때문이다. 대신, 패치 4개가 하나의 패치로 concat 되었으므로, 하나의 패치에서 갖고 있던 차원 수는 4배로 늘어난다. 선형 변환을 통해서 4배로 늘어난 차원을 최종적으로 2배로 줄였다.
+
+     BasicLayer를 선언하는 코드에서 `downsample=PatchMerging if (i_layer < self.num_layers - 1) else None`를 확인할 수 있는데, 이는 Stage 2, 3, 4 에서 이전 Stage가 끝나게 되면 시행된다. Stage 1 이후의 PatchMerging 결과 기존의 56x56 크기의 패치들은 28x28 크기의 패치들로 병합된다. 또한 임베딩 차원은 96에서 192로 늘어난다. 다만 인접한 패치들을 결합하면 차원이 4배로 증가하는데, 이를 절반으로 줄여주는 선형 변환 과정을 한번 거치게 된다.
+
+     <img src="../assets/img/Swin_Transformer/patchmerging.png" alt="patchmerging" style="zoom:25%;" />
+     
+     결과적으로 입력 데이터[B,L,C]는 [B,L//4,2C]의 형태로 변환되어 출력된다.
+     
+     ```python
+     class PatchMerging(nn.Module):
+         r""" Patch Merging Layer.
+     
+         Args:
+             input_resolution (tuple[int]): Resolution of input feature.
+             dim (int): Number of input channels.
+             norm_layer (nn.Module, optional): Normalization layer.  Default: nn.LayerNorm
+         """
+     
+         def __init__(self, input_resolution, dim, norm_layer=nn.LayerNorm):
+             super().__init__()
+             self.input_resolution = input_resolution
+             self.dim = dim
+             self.reduction = nn.Linear(4 * dim, 2 * dim, bias=False)
+             self.norm = norm_layer(4 * dim)
+     
+         def forward(self, x):
+             """
+             x: B, H*W, C
+             """
+             H, W = self.input_resolution
+             B, L, C = x.shape
+             assert L == H * W, "input feature has wrong size"
+             assert H % 2 == 0 and W % 2 == 0, f"x size ({H}*{W}) are not even."
+     
+             x = x.view(B, H, W, C) # [1, 3136, 96] -> [1, 56, 56, 96]
+     
+             x0 = x[:, 0::2, 0::2, :]  # B H/2 W/2 C = [1, 28, 28, 96]
+             x1 = x[:, 1::2, 0::2, :]  # B H/2 W/2 C = [1, 28, 28, 96]
+             x2 = x[:, 0::2, 1::2, :]  # B H/2 W/2 C = [1, 28, 28, 96]
+             x3 = x[:, 1::2, 1::2, :]  # B H/2 W/2 C = [1, 28, 28, 96]
+             x = torch.cat([x0, x1, x2, x3], -1)  # B H/2 W/2 4*C = [1, 28, 28, 384]
+             x = x.view(B, -1, 4 * C)  # B H/2*W/2 4*C = [1, 784, 384]
+     
+             x = self.norm(x)
+             x = self.reduction(x) # [1, 784, 384] -> [1, 784, 192]
+     
+             return x
+     ```
+
+#### Swin Transformer block
 
 
-**Figure 3. Tiny version**
 
-<img src="../assets/img/Swin_Transformer/figure3.png" alt="figure3" style="zoom:30%;" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -67,111 +202,6 @@ $$
 
 ```python
 x = x + self.drop_path(self.mlp(self.norm2(x)))
-```
-
-
-
-
-
-## Method
-
-
-
-### Architecture
-
-논문에서는 Swin Transformer-T(tiny) 모델 구조를 예로 설명하였다.
-
-#### PatchEmbedding
-
-입력 이미지를 patch splitting model 을 사용하여 서로 겹치지 않는 패치들로 나누어 준다. 각각의 패치들은 토큰처럼 사용되며, 이 패치는 원본 이미지의 RGB 값들을 연결한 특징을 가진다.
-
-입력 데이터[배치 크기, 채널 수, 세로, 가로]를 [배치 크기, 패치 개수, 임베딩 채널 수]로 변환시킨다.
-
-```python
-class PatchEmbed(nn.Module):
-    r""" Image to Patch Embedding
-
-    Args:
-        img_size (int): Image size.  Default: 224.
-        patch_size (int): Patch token size. Default: 4.
-        in_chans (int): Number of input image channels. Default: 3.
-        embed_dim (int): Number of linear projection output channels. Default: 96.
-        norm_layer (nn.Module, optional): Normalization layer. Default: None
-    """
-
-    def __init__(self, img_size=224, patch_size=4, in_chans=3, embed_dim=96, norm_layer=None):
-        super().__init__()
-        img_size = to_2tuple(img_size) # 224->tuple(224, 224)
-        patch_size = to_2tuple(patch_size) # 4->tuple(4, 4)
-        patches_resolution = [img_size[0] // patch_size[0], img_size[1] // patch_size[1]] # 패치 해상도는 [56, 56]
-        self.img_size = img_size
-        self.patch_size = patch_size
-        self.patches_resolution = patches_resolution
-        self.num_patches = patches_resolution[0] * patches_resolution[1] # 56x56=3136
-
-        self.in_chans = in_chans # RGB=3
-        self.embed_dim = embed_dim # 96
-
-        self.proj = nn.Conv2d(in_chans, embed_dim, kernel_size=patch_size, stride=patch_size)
-        if norm_layer is not None:
-            self.norm = norm_layer(embed_dim)
-        else:
-            self.norm = None
-
-    def forward(self, x):
-        B, C, H, W = x.shape
-        # FIXME look at relaxing size constraints
-        assert H == self.img_size[0] and W == self.img_size[1], \
-            f"Input image size ({H}*{W}) doesn't match model ({self.img_size[0]}*{self.img_size[1]})."
-        x = self.proj(x).flatten(2).transpose(1, 2)  # x=[B,C,H,W]->proj=[B,embed_dim,Ph,Pw]->flatten=[B,embed_dim,Ph*Pw]->transpose=[B,Ph*Pw,embed_dim]
-        if self.norm is not None:
-            x = self.norm(x)
-        return x # [B,Ph*Pw,embed_dim] e.g. [1, 3136, 96]
-```
-
-#### PatchMerging
-
-네트워크의 계층이 깊어질수록 패치 수는 줄어들고, 차원 수는 2배로 늘어난다. 이는 PatchMerging 계층에서 2x2 크기의 영역에서 인접한 패치들끼리 concat 시키므로, 기존의 이미지에서 추출한 패치 56개가 28개로 줄어들기 때문이다. 대신, 패치 4개가 하나의 패치로 concat 되었으므로, 하나의 패치에서 갖고 있던 차원 수는 4배로 늘어난다. 선형 변환을 통해서 4배로 늘어난 차원을 최종적으로 2배로 줄였다.
-
-```python
-class PatchMerging(nn.Module):
-    r""" Patch Merging Layer.
-
-    Args:
-        input_resolution (tuple[int]): Resolution of input feature.
-        dim (int): Number of input channels.
-        norm_layer (nn.Module, optional): Normalization layer.  Default: nn.LayerNorm
-    """
-
-    def __init__(self, input_resolution, dim, norm_layer=nn.LayerNorm):
-        super().__init__()
-        self.input_resolution = input_resolution
-        self.dim = dim
-        self.reduction = nn.Linear(4 * dim, 2 * dim, bias=False)
-        self.norm = norm_layer(4 * dim)
-
-    def forward(self, x):
-        """
-        x: B, H*W, C
-        """
-        H, W = self.input_resolution
-        B, L, C = x.shape
-        assert L == H * W, "input feature has wrong size"
-        assert H % 2 == 0 and W % 2 == 0, f"x size ({H}*{W}) are not even."
-
-        x = x.view(B, H, W, C) # [1, 3136, 96] -> [1, 56, 56, 96]
-
-        x0 = x[:, 0::2, 0::2, :]  # B H/2 W/2 C = [1, 28, 28, 96]
-        x1 = x[:, 1::2, 0::2, :]  # B H/2 W/2 C = [1, 28, 28, 96]
-        x2 = x[:, 0::2, 1::2, :]  # B H/2 W/2 C = [1, 28, 28, 96]
-        x3 = x[:, 1::2, 1::2, :]  # B H/2 W/2 C = [1, 28, 28, 96]
-        x = torch.cat([x0, x1, x2, x3], -1)  # B H/2 W/2 4*C = [1, 28, 28, 384]
-        x = x.view(B, -1, 4 * C)  # B H/2*W/2 4*C = [1, 784, 384]
-
-        x = self.norm(x)
-        x = self.reduction(x) # [1, 784, 384] -> [1, 784, 192]
-
-        return x
 ```
 
 #### Swin Transformer Block
