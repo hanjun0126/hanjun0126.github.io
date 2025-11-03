@@ -5,17 +5,19 @@ tags: [NLP]
 math: true
 ---
 
-# Attention is all you need 논문 리뷰[미완성]]
+# Attention is all you need 논문 정리[미완성]]
 
 쿼리키벨류 설명 및 파이썬 코드 필요
 
 Paper : [Attention Is All You Need](https://arxiv.org/pdf/1706.03762)	[Transformer 설명 참조 영상](https://www.youtube.com/watch?v=6s69XY025MU)
 
-## abstract
+## Abstract
 
-논문의 요지는 다음과 같다. 기존의 Sequence 변환 모델들은 Encoder 와 Decoder를 사용하는 복잡한 Recurrent 또는 CNN 을 기반으로 했다. 가장 성능이 높은 모델 또한 Attention 기법으로 Encoder 와 Decoder 를 연결했다. 논문에서는 **Attention 메커니즘에만 기반한 Transformer 구조**를 제안한다.
+>   We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely.
 
-*WMT  2014 English-to-German* translation task 에서는 28.4 BLEU(기존의 최고 성능보다 2 BLEU 성능 향상), *WMT 2014 English-to-French* translation task 에서는 41.8 BLEU 를 달성했다. 이 두 실험은 Transformer 구조가 성능면에서 더 뛰어남을 보여준다. 병렬화에 최적화되고 학습에 사용되는 시간은 훨씬 적다.
+논문의 요지는 다음과 같다. 기존의 Sequence 변환 모델들은 Encoder 와 Decoder를 사용하는 복잡한 Recurrent 또는 CNN 을 기반으로 했다. 가장 성능이 높은 모델 또한 Attention 기법으로 Encoder 와 Decoder 를 연결했다. 논문에서는 **Attention 메커니즘에만 기반한 Transformer 구조**를 제안했다.
+
+*WMT  2014 English-to-German* translation task 에서는 28.4 BLEU(기존의 최고 성능보다 2 BLEU 성능 향상), *WMT 2014 English-to-French* translation task 에서는 41.8 BLEU 를 달성했다. 이 두 실험은 Transformer 구조가 성능면에서 더 뛰어남을 보여준다. **병렬화에 최적화되고 학습에 사용되는 시간은 훨씬 적다.**
 
 ***
 
@@ -31,104 +33,161 @@ Paper : [Attention Is All You Need](https://arxiv.org/pdf/1706.03762)	[Transform
 
 ## Model Architecture
 
+<img src="../assets/img/transformer/transformer_model_architecture_1.jpg" alt="Transformer" style="zoom:20%;" />
+
+### Input Embedding
+
+데이터 셋에 대한 단어 사전크기와 각 단어를 표현할 벡터의 차원을 가지고 임베딩을 만드는 단계이다.
+
+```python
+class InputEmbedding(nn.Module):
+    def __init__(self, vocab_size, d_model):
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, d_model)
+        self.emb_size = d_model
+        
+    def forward(self, tokens):
+        return self.embedding(tokens.long()) * math.sqrt(self.emb_size)
+```
+
+`__init__`: 초기화
+
+-   **`self.embedding = nn.Embedding(vocab_size, emb_size)`**: 단어 사전 크기(`vocab_size`)와 각 단어를 표현할 벡터의 차원(`d_model`)을 받아 `nn.Embedding` 레이어를 생성한다. 이 레이어는 단어 인덱스와 해당 벡터를 매핑하는 룩업 테이블 역할을 한다.
+-   **`self.emb_size = d_model`**: 나중에 스케일링 값을 계산하기 위해 임베딩 차원 크기를 저장합니다.
+
+`forward`: 계산
+
+-   **`self.embedding(tokens.long())`**: 입력으로 들어온 정수 토큰(`tokens`)을 `nn.Embedding` 레이어에 통과시켜 각 토큰에 해당하는 의미 벡터를 조회한다.
+-   **`* math.sqrt(self.emb_size)`**: 위에서 얻은 의미 벡터에 임베딩 차원의 제곱근 값을 곱해준다.
+
+의미 벡터에 임베딩 차원의 제곱근 값을 곱하여 벡터의 크기를 조절한다. 이는 단어의 의미 정보와 위치 정보를 균형 있게 학습하기 위함이다.
+
+>   In our model, we share the same weight matrix between the two embedding layers and the pre-softmax linear transformation, similar to [30]. In the embedding layers, we multiply those weights by $\sqrt{d_{model}}$.
+
+### Positional Encoding
+
+Transformer는 RNN / LSTM 처럼 순차적인 구조가 없기 때문에, 단어의 순서를 알 수 없다. 이를 해결하기 위해, 입력 벡터에 “위치 정보”를 추가하는 Positional Encoding을 사용한다. 논문에서는 삼각함수(Sinusoidal Functions)를 이용한 Positional Encoding을 제안했다.
+
+입력 임베딩에 positional encoding을 더해준다. Positional encoding 또한 입력 임베딩과 같은 차원인 $\mathbf{d_{model}}$을 가지므로 더하기 연산이 가능하다.
+
+$$
+\begin{align}
+PE_{(pos, 2i)} = \sin \left(\frac{pos}{10000^{2i/d_{\text{model}}}} \right)
+\\
+PE_{(pos, 2i+1)} = \cos \left(\frac{pos}{10000^{2i/d_{\text{model}}}} \right)
+\end{align}
+$$
+
+
+pos 는 단어의 위치(0, 1, 2, ...) 이고, i 는 차원 인덱스(0, 1, 2, ... , $d_{model}\over2$) 이다. 위치 정보를 일정한 패턴으로 벡터에 추가하여, 순서 정보를 학습 할 수 있게 만든다.
+
+**Code**
+
+```python
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model, max_len, dropout=0.1):
+        super().__init__()
+        self.dropout = nn.Dropout(p=dropout)
+
+        position = torch.arange(max_len).unsqueeze(1)
+        # div_term = 1.0 / (10000.0 ** (torch.arange(0, d_model, 2) / d_model))
+        div_term = torch.exp(torch.arange(0, d_model, 2) * (-math.log(10000.0) / d_model)) # (1/10000(2i/d_model))
+
+        pe = torch.zeros(max_len, 1, d_model) # [max_len, 1, d_model] 크기의 텐서
+        pe[:, 0, 0::2] = torch.sin(position * div_term) # 짝수 인덱스
+        pe[:, 0, 1::2] = torch.cos(position * div_term) # 홀수 인덱스
+        self.register_buffer("pe", pe) # 모델이 매개변수를 갱신하지 않도록 설정
+
+    def forward(self, x):
+        x = x + self.pe[:x.size(0)] # 입력 길이에 맞춰 필요한 위치 인코딩만 선택하여 더함.
+        return self.dropout(x)
+```
+
+`__init__`: 초기화(위치 벡터 미리 계산)
+
+모델이 처리할 수 있는 최대 문장 길이(max_len)에 대한 모든 위치 벡터를 미리 한 번에 게산해서 저장해두는 과정이다. 
+
+-   **`position`**: `[[0], [1], [2], ..., [max_len-1]]` 형태의 위치 인덱스 텐서를 만든다.
+
+-   **`div_term`**: Positional Encoding의 sin, cos 함수 안에 들어가는 주파수($1\over{10000^{2i/d_\mathbf{model}}}$) 부분을 계산한다.
+
+-   주파수를 직접 계산하면, $\mathbf{d_{model}}$ 값에 따라 10000 부분이 매우 커지거나 작아진다. 이럴 경우 오버플로우나 언더플로우가 발생할 수 있다. 수학적으로 $\mathbf{X=exp(log(X))}$ 이기에 `torch.exp`와 `math.log`를 사용하여 수치적으로 더 안정적인 계산을 할 수 있다. 두 함수를 사용하면 입력 차원 값의 따라 변화가 큰 거듭제곱 연산을 안정적인 곱셈 연산으로 바꿔준다. 로그 공간 안에서는 값의 범위가 좁아져 오버플로우나 언더플로우가 발생할 위험이 줄어들게 된다.
+
+    
+    $$
+    \mathbf{1\over10000^{2i/d_{model}}}=\mathbf{\exp(-log(10000^{2i/d_{model}}))}=\mathbf{\exp(-{2i\over{d_model}}log(10000))}
+    $$
+
+
+
+-   **`pe`**: 최종 위치 인코딩 벡터들을 담을 `(max_len, 1, d_model)` 크기의 빈 텐서를 생성한다. 가운데 차원이 1인 이유는 어떤 배치 크기에도 쉽게 브로드캐스팅될 수 있도록 하기 위함입니다.
+-   **`pe[:, 0, 0::2]` (짝수 인덱스)**: `d_model` 차원의 짝수 인덱스 위치에는 sin 함수를 적용한 값을 채워 넣는다.
+-   **`pe[:, 0, 1::2]` (홀수 인덱스)**: 홀수 인덱스 위치에는 cos 함수를 적용한 값을 채워 넣는다.
+-   **`self.register_buffer("pe", pe)`**:  `pe` 텐서를 모델의 파라미터(학습 대상)로는 등록하지 않지만, 모델의 상태(state)로는 저장한다. 따라서 모델을 저장하거나 불러올 때 이 `pe` 값도 함께 관리되지만, 옵티마이저에 의해 업데이트되지는 않는다.
+
+`forward`: 계산(위치 정보 더하기)
+
+-   **`x`**: 입력 데이터로, `(문장 길이, 배치 크기, 임베딩 차원)` 크기를 가진다.
+-   **`self.pe[: x.size(0)]`**: `__init__`에서 미리 만들어 둔 전체 위치 인코딩(`self.pe`)에서 현재 입력된 문장의 길이(`x.size(0)`)만큼만 잘라서 사용한다. 이 덕분에 모델이 `max_len`보다 짧은 문장도 유연하게 처리할 수 있다.
+-   **`x = x + ...`**: 입력 임베딩(`x`)에 잘라낸 위치 인코딩을 요소별로 더해준다. 이로써 단어의 의미 정보와 위치 정보가 하나의 텐서에 합쳐진다.
+-   **`self.dropout(x)`**: 과적합을 방지하기 위해 드롭아웃을 적용한 후 최종 결과를 반환한다.
+
+<img src="../assets/img/transformer/transformer_model_architecture.png" alt="Transformer" style="zoom:20%;" />
+
 ### Encoder and Decoder stacks
 
 <p style="font-size:125%">Encoder</p>
 
 N = 6 인 동일한 layer 의 stack 으로 구성된다. 각각의 layer 는 첫 번째로 **multi-head self-attention** 을, 두 번째로 **positionwise fully connected feed-foward network** 로 구성된다. residual connection 을 각 layer 의 적용시키고, layer normalization 을 한다. 각각의 Layer 는 **LayerNorm(x + Sublayer(x))** 을 출력한다. d_model = 512
 
-<p style="font-size:125%">Decoder</p>
-
-N = 6 인 동일한 layer 의 stack 으로 구성된다. 인코더의 출력으로부터 **multi-head attention** 을 수행하기 위해 2 개의 추가적인 sub-layer 를 가진다. 각각의 Layer 는 **LayerNorm(x + Sublayer(x))** 을 출력한다. 
-
-position 이 뒤따르는 position 에 영향을 주는 것을 막기 위해 **masking** 을 사용한다. 이는 출력 임베딩이 하나의 position 으로 offset 된다는 사실이 position i 에 대한 예측은 보다 작은 position 의 알려진 출력에만 의존할 수 있다는 것을 보장한다.
-
-<img src="../assets/img/transformer/transformer_model_architecture.png" alt="Transformer" style="zoom:20%;" />
-
-```python
-class Transformer(nn.Module):
-	def __init__(self, encoder, decoder):
-    super(Transformer, self).__init__()
-    self.encoder = encoder
-    self.decoder = decoder
-    
-  def encode(self, x):
-		out = self.encoder(x)
-    return out
-  
-  def decode(self, z, c):
-    out = self.decode(z, c)
-    return out
-  
-  def forward(self, x, z):
-    c = self.encode(x)
-    y =. elf.decode(z, c)
-    return y
-```
+**Code**
 
 ```python
 class Encoder(nn.Module):
-  def __init__(self, encoder_block, n_layer):
-    super(Encoder, self).__init__()
-    self.layers = []
-    for i in range(n_layer):
-      self.layers.append(copy.deepcopy(encoder_block))
-      
-  def forward(self, x):
-    out = x
-    for layer in self.layers:
-      out = layer(out)
-   	return out
+    def __init__(self, d_model, num_heads, num_layers, dim_feedforward=2048, dropout=0.1):
+        super().__init__()
+        
+        self.layers = nn.ModuleList([
+            EncoderLayer(d_model, num_heads, dim_feedforward, dropout)
+            for _ in range(num_layers)
+        ])
+        self.norm = nn.LayerNorm(d_model)
+        
+    def forward(self, src, src_mask=None):
+        for layer in self.layers:
+            src = layer(src, src_mask)
+        return self.norm(src)
 ```
 
-```python
-class EncoderBlock(nn.Module):
-  def __init__(self, self_attention, position_ff):
-    super(EncoderBlock, self).__init()
-    self.self_attention = self_attention
-    self.postion_ff = position_ff
-    
-  def forward(self, x):
-    out = x
-    out = self.self_attention(out)
-    out = self.position_ff(out)
-    return out
-```
+`__init__`: 인코더 설계
 
-```python
-class Decoder(nn.Module):
-  def __init__(self, decoder_block, n_layer):
-    super(Decoder, self).__init__()
-    self.n_layer = n_layer
-    self.layers = nn.ModuleList([copy.deepcopy(decoder_block) for _ in range(self.n_layer)])
-    
-  def forward(self, tgt, encoder_out, tgt_mask, src_tgt_mask):
-    out = tgt
-    for layer in self.layers:
-      out = layer(out, encoder_out, tgt_mask, src_tgt_mask)
-    return out
-```
+dㅣㄴ코더의 구조와 하이퍼파라미터를 정의한다.
 
-```python
-class DecoderBlock(nn.Module):
-  def __iinit__(self, self_attention, cross_attention, position_ff):
-    super(DecoderBlock, self).__init__()
-    self.self_attention = self_attention
-    self.cross_attention = cross_attention
-    self.position_ff = position_ff
-    self.residuals = [ResidualConnectionLayer() for _ in range(3)]
-    
-   def forward(self, tgt, encoder_out, tgt_mask, src_tgt_mask):
-     out = tgt
-     out = self.residuals[0](out, lambda out: self.self_attention(query=out, key=out, value=out, mask=tgt_mask))
-     out = self.residuals[1](out, lambda out: self.cross_attention(query=out, key=encoder_out, value=encoder_out, mask=src_tgt_mask))
-     out = self.residuals[2](out, self.position_ff)
-     return out
-```
+-   **`d_model`, `num_heads`, `dim_feedforward`, `dropout`**: `EncoderLayer`를 만드는 데 필요한 설정값들입니다. 이 값들은 모든 하위 레이어에 동일하게 적용됩니다.
 
+    **`num_layers`**: 조립 라인에 작업대를 몇 개 둘지 결정합니다. 즉, 
 
+-   **`num_layers`**: 조립 라인에 작업대를 몇 개 둘지 결정합니다. 즉, `EncoderLayer`를 몇 겹으로 쌓을지를 나타냅니다. (논문에서는 6개)
 
+-   **`self.layers = nn.ModuleList([...])`**: `EncoderLayer`를 `num_layers` 개수만큼 생성하여 파이토치가 인식할 수 있는 리스트(`nn.ModuleList`)에 담습니다. 각 레이어는 동일한 구조를 가지지만, 학습을 통해 서로 다른 가중치를 갖게 됩니다.
 
+-   **`self.norm = nn.LayerNorm(d_model)`**: 모든 레이어를 통과한 후 최종적으로 딱 한 번 사용될 층 정규화(Layer Normalization) 레이어입니다. 최종 품질 검사와 같습니다.
+
+`forward`: 인코더 작동 방식
+
+데이터가 인코더 조립 라인을 통과하는 실제 과정을 정의한다.
+
+-   **`src`**: 소스(Source) 데이터, 즉 입력 문장의 임베딩 텐서입니다. `(batch_size, seq_len, d_model)` 크기를 가집니다.
+-   **`src_mask`**: 소스 데이터의 패딩(padding) 부분을 어텐션 계산에서 무시하도록 만드는 마스크입니다.
+-   **`for layer in self.layers:`**: N개의 작업대(`EncoderLayer`)를 하나씩 순서대로 통과합니다.
+-   **`src = layer(src, src_mask)`**: 데이터(`src`)가 첫 번째 레이어를 통과하여 가공됩니다. 그 결과물이 다시 `src`가 되어 다음 레이어의 입력으로 들어가는 과정이 `num_layers`번 반복됩니다. 각 단계를 거치면서 입력 텐서는 문맥 정보가 더욱 풍부하게 반영된 상태로 업데이트됩니다.
+-   **`return self.norm(src)`**: 모든 레이어를 통과한 최종 결과물에 `self.norm`을 적용하여 인코더의 최종 출력을 반환합니다.
+
+<p style="font-size:125%">Decoder</p>
+
+N = 6 인 동일한 layer 의 stack 으로 구성된다. 인코더의 출력으로부터 **multi-head attention** 을 수행하기 위해 2 개의 추가적인 sub-layer 를 가진다. 각각의 Layer 는 **LayerNorm(x + Sublayer(x))** 을 출력한다.
+
+position 이 뒤따르는 position 에 영향을 주는 것을 막기 위해 **masking** 을 사용한다. 이는 출력 임베딩이 하나의 position 으로 offset 된다는 사실이 position i 에 대한 예측은 보다 작은 position 의 알려진 출력에만 의존할 수 있다는 것을 보장한다.
 
 ---
 
@@ -219,7 +278,7 @@ FFN 의 특징
 
 
 
-**1각 단어(토큰)에 독립적으로 적용됨 (Position-wise 적용)**
+1.   **각 단어(토큰)에 독립적으로 적용됨 (Position-wise 적용)**
 
 ​	•	FFN은 **각 단어의 표현을 비선형 변환하는 역할**
 
@@ -283,6 +342,8 @@ class PositionalEncoding(nn.Module):
         x = x + self.pe[: x.size(0)] # 입력 길이에 맞춰 필요한 위치 인코딩만 선택하여 더함.
         return self.dropout(x)
 ```
+
+
 
 ---
 
