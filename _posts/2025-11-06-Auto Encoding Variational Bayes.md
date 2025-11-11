@@ -3,7 +3,7 @@ categories: [paper]
 description: VAE 정리
 tags: [공부]
 math: true
-pub
+published: true
 ---
 
 논문: [Auto-Encoding Variational Bayes](https://arxiv.org/pdf/1312.6114)

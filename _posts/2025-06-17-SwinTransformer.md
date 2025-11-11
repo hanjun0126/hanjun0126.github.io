@@ -3,6 +3,7 @@ categories: [paper, computer vision]
 description: Swin Transformer 논문 정리
 tags: [AI, CV]
 math: true
+published: true
 ---
 
 **Paper**: [Swin Transformer: Hierarchical Vision Transformer using Shifted Windows](https://arxiv.org/pdf/2103.14030)
