@@ -3,6 +3,7 @@ categories: [paper, computer vision]
 description: Faster R-CNN 정리
 tags: [CV]
 math: true
+published: false
 ---
 
 Paper: [Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks](https://arxiv.org/abs/1506.01497)
