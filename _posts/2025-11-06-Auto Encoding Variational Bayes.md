@@ -5,15 +5,15 @@ tags: [공부]
 math: true
 ---
 
-paper: [Auto-Encoding Variational Bayes](https://arxiv.org/pdf/1312.6114)
+논문: [Auto-Encoding Variational Bayes](https://arxiv.org/pdf/1312.6114)
 
-논문에서는 **연속적인 잠재 변수를 사용하여 효율적인 근사 추론을 수행하기 위해, 변분 하한(ELBO)의 새로운 추정량인 SGVB를 소개하였다.** 이는 재매개변수화 방법을 사용해 ELBO를 계산하는 실용적인 방법으로 분산이 낮아서 안정적으로 학습이 가능하다. 이 추정량은 표준적인 확률적 경사 하강법을 사용해 간단히 미분되고 최적화될 수 있다. 독립 항등 분포 데이터셋과 데이터 포인트당 연속적인 잠재 변수가 있는 경우를 위해, SGVB 추정량을 사용하여 근사 추론 모델을 학습하는, 효율적인 추론 및 학습 알고리즘인 AEVB를 소개한다.
+논문에서는 **연속적인 잠재 변수를 사용하여 효율적인 근사 추론을 수행하기 위해, 변분 하한(ELBO)의 새로운 추정량인 SGVB (Stochastic Gradient Variational Bayes)를 소개하였다.** 이는 재매개변수화 방법을 사용해 ELBO를 계산하는 실용적인 방법으로 분산이 낮아서 안정적으로 학습이 가능하다. 이 추정량은 표준적인 확률적 경사 하강법을 사용해 간단히 미분되고 최적화될 수 있다. 독립 항등 분포 데이터셋과 데이터 포인트당 연속적인 잠재 변수가 있는 경우를 위해, SGVB 추정량을 사용하여 근사 추론 모델을 학습하는, 효율적인 추론 및 학습 알고리즘인 AEVB를 소개한다.
 
-
+---
 
 <img src="../assets/img/VAE/abstract.png" alt="abstract" style="zoom:40%;" />
 
-**Abstract**
+## Abstract
 
 >   How can we perform efficient inference and learning in directed probabilistic models, in the presence of continuous latent variables with intractable posterior distributions, and large datasets?
 >
@@ -21,13 +21,13 @@ paper: [Auto-Encoding Variational Bayes](https://arxiv.org/pdf/1312.6114)
 
 논문에 등장하는 첫 문장이다. 다루기 힘든 사후 분포란 무엇일까? 먼저 사후 분포(Posterior)란 데이터 $x$ 가 주어졌을 때 $z$ 의 분포($p(z\vert x)$)를 말한다. 이는 추론 모델에서 인코더의 목표이다. 이런 사후 분포가 다루기 힘든 이유는 다음과 같다.
 
-**Intractable posterior distributions**
+### **Intractable posterior distributions**
 
 베이즈 정리에 따르면 $p(z\vert x)={p(x\vert z)p(z)\over p(x)}$ 이다. 여기서 분모인 $p(x)$ 는 $p(x)=\int p(x\vert z)p(z)dz$ 로 계산해야 한다. $z$ 는 연속적인 잠재 변수이기 때문에, 이 적분 $\int \dots dz$ 는 $z$ 의 모든 가능한 경우의 수에 대해 수행해야 하는데, $z$ 가 가질수 있는 값이 무한대이기 때문에 이는 계산적으로 불가능하다. 즉, $p(x)$ 를 모르니, $p(z\vert x)$ 역시 정확하게 계산할 수 없다.
 
 1.   왜 $p(x)=\int p(x\vert z)p(z)dz$ 로 계산해야 하는가?
 
-     $p(x)$ 는 $z$ 가 무엇이든 상관없이, 데이터 $x$ 가 관측될 확률이다. VAE의 가정은 어떤 잠재 변수 $z$ 가 먼저 뽑히고 ($p(z)$), 그 $z$ 를 바탕으로 데이터 $x$ 가 생성된다($p(x\vert z)$). $p(x)$ 는 우리가 관측한 이미지 $x$ 가 생성될 확률이고, 이 $x$ 는 수많은 가능한 $z$ 중 하나에 의해 생성되었을 것이다. 즉, $p(x)$ 를 구할려면, $x$ 를 생성할 수 있는 모든 $z$ 의 경우를 고려하여 그 확률을 전부 더해야 한다.
+     $p(x)$ 는 $z$ 가 무엇이든 상관없이, 데이터 $x$ 가 관측될 확률이다. VAE의 가정은 어떤 잠재 변수 $z$ 가 먼저 뽑히고 ($p(z)$), 그 $z$ 를 바탕으로 데이터 $x$ 가 생성된다($p(x\vert z)$). $p(x)$ 는 우리가 관측한 이미지 $x$ 가 생성될 확률이고, 이 $x$ 는 수많은 가능한 $z$ 중 하나에 의해 생성되었을 것이다. 즉, $p(x)$ 를 구할려면, $x$ 를 생성할 수 있는 모든 $z$ 의 경우를 고려하여 그 확률을 전부 더해야 한다. 여기서 $z$ 는 독립적인 변수이다.
 
      <img src="../assets/img/VAE/다루기 힘든 사후 분포 질문 1.heic" alt="fig1" style="zoom:20%;" />
 
@@ -37,9 +37,11 @@ paper: [Auto-Encoding Variational Bayes](https://arxiv.org/pdf/1312.6114)
 
 이러한 상황 속 VAE의 목표는 효율적인 학습과 추론이 가능하도록 하는 것이다. 학습이란 우리에게 주어진 데이터를 가장 잘 생성해낼 수 있는 모델의 파라미터 $\theta$ 를 찾는 과정이다. 즉, 디코더($p(x\vert z)$)가 실제 같은 이미지를 만들도록 훈련하는 것이다. 추론이란 이미 학습된 모델(디코더)이 있을 때, 특정 데이터 $x$ 가 주어지면 이 데이터를 생성했을 잠재 변수 $z$ 는 무엇인지 알아내는 과정이다. 즉, 인코더의 역할인 $p(z\vert x)$ 를 계산한다.
 
-VAE는 이러한 계산 불가능한 $p(z\vert x)$ 대신, 우리가 다루기 쉬운 간단한 분포(예: 정규분포)인 $q(z\vert x)$로 근사한다. 이 $q$가 바로 VAE의 인코더이고, 이러한 방법을 변분 추론(Variational Inference)이라고 한다. 이를 위해 $p(z\vert x)$ 와 $q(z\vert x)$ 를 가깝게 만드는 동시에 $p(x)$를 최대화하는 ELBO(Evidence Lower Bound)라는 목적함수를 사용하게 된다.
+VAE는 이러한 계산 불가능한 $p(z\vert x)$ 대신, 우리가 다루기 쉬운 간단한 분포(예: 정규분포)인 $q(z\vert x)$로 근사한다. 이 $q$ 가 바로 VAE의 인코더이고, 이러한 방법을 변분 추론(Variational Inference)이라고 한다. 이를 위해 $p(z\vert x)$ 와 $q(z\vert x)$ 를 가깝게 만드는 동시에 $p(x)$를 최대화하는 ELBO(Evidence Lower Bound)라는 목적함수를 사용하게 된다.
 
-다음으로 중요하게 볼 점은 "Large Datasets", 즉 대규모 데이터셋에서 어떻게 학습할 것인가? 데이터가 많은 경우 전통적인 통계적 학습 방법(예: MCMC, EM알고리즘)은 너무 느려서 현실적으로 사용할 수 없다. 따라서 우리는 전체 데이터를 조금씩 나눠서 처리하는 SGD 기반의 최적화를 사용해야 한다. 하지만 $q(z\vert x)$ 에서 $z$ 를 샘플링하는 과정은 "확률적"이라 미분이 불가능하다. 이에 재매개변수화 기법(Reparameterization Trick)을 사용해 이 샘플링 과정을 미분 가능한 연산으로 분리해낸다.
+### **Large Datasets**
+
+다음으로 중요하게 볼 점은 "Large Datasets", 즉 대규모 데이터셋에서 어떻게 학습할 것인가? 데이터가 많은 경우 전통적인 통계적 학습 방법(예: MCMC, EM알고리즘)은 너무 느려서 현실적으로 사용할 수 없다. 따라서 우리는 전체 데이터를 조금씩 나눠서 처리하는 SGD 기반의 최적화를 사용해야 한다. 하지만 $q(z\vert x)$ 에서 $z$ 를 샘플링하는 과정은 "확률적"이라 미분이 불가능하다. 이에 재매개변수화 방법(Reparameterization Trick)을 사용해 이 샘플링 과정을 미분 가능한 연산으로 분리해낸다.
 
 결론적으로, 이 첫 문장은 "우리는 이런 심각한 문제가 있는데, 이 문제를 풀기 위해 Variational Inference(변분 추론)와 Autoencoder(신경망)를 SGD(효율성)로 학습할 수 있는 VAE를 제안한다.
 
@@ -47,19 +49,19 @@ VAE는 이러한 계산 불가능한 $p(z\vert x)$ 대신, 우리가 다루기 �
 
 
 
-## Introduction
+## **Introduction**
 
 Variational bayesian (VB) 방식은 모델이 조금만 복잡해져도 $q(z\vert x)$ 를 최적화하는 공식을 손으로 유도하는 것 자체가 불가능하거나, 데이터 하나하나마다 비싼 최적화 계산을 반복해야해서 대규모 데이터셋에 비효율적이었다. 논문은 이 문제들을 해결하기 위해 AEVB(Auto-Encodding VB)라는 새로운 알고리즘을 제안하며, 이 알고리즘의 핵심 기여는 두 가지이다.
 
-1.   재매개변수화 기법(Reparameterization Trick)
+1.   **재매개변수화 방법(Reparameterization Trick)**
 
-     $q(z\vert x)$ 에서 $z$ 를 샘플링하는 확률적인 과정을, 미분 가능한 결정론적 과정으로 분리했다. ($z=\mu +\sigma *\varepsilon$) 이 기법 덕분에 모델 전체가 미분 가능해졌다. 복잡한 공식을 손으로 풀 필요 없이 SGD만으로 모델 전체를 한 번에 학습시킬 수 있게 되었다. 이것을 SGVB 추정량이라고 한다.
+     $q(z\vert x)$ 에서 $z$ 를 샘플링하는 확률적인 과정을, 미분 가능한 결정론적 과정으로 분리했다. ($z=\mu +\sigma *\varepsilon$) 이 방법 덕분에 모델 전체가 미분 가능해졌다. 복잡한 공식을 손으로 풀 필요 없이 SGD만으로 모델 전체를 한 번에 학습시킬 수 있게 되었다. 이것을 SGVB 추정량이라고 한다.
 
-2.   Recognition Model 도입
+2.   **Recognition Model 도입**
 
-     $x$ 가 주어지면 $z$ 의 분포 ($q(z\vert x)$) 를 즉시 출력하는 신경망(인코더)을 사용했다. 데이터 하나마다 $z$ 를 따로 계싼하는 비싼 반복 작업을 없애기 위해서이다. 
+     $x$ 가 주어지면 $z$ 의 분포 ($q(z\vert x)$) 를 즉시 출력하는 신경망(인코더)을 사용했다. 데이터 하나마다 $z$ 를 따로 계산하는 비싼 반복 작업을 없애기 위해서이다. 
 
-## 상황
+## **상황**
 
 연속적이거나 이산적인 변수 $x$ 의 $N$ 개 i.i.d(독립 항등 분포) 샘플로 구성된 데이터셋 $X={\{x^{i}\}_{i=1}^N}$ 가 있다. 이 데이터들은 우리가 알기 어려운 연속적인 잠재 변수 $z$ 를 포함하는 어떤 랜덤 프로세스에 의해 생성된다고 가정한다.
 
@@ -294,9 +296,3 @@ $$\text{where}\quad z^{(i,l)}=\mu^i+\sigma^i\odot\epsilon^l\quad\text{and}\quad\
 2.   두 번째 항
 
      재구성 손실이다. 이 항은 $z$ 를 반드시 $L$ 번 샘플링 해야만 계산할 수 있다. 데이터 종류에 따라 BCE 또는 MSE 손실로 계산된다.
-
-
-
-# Conclusion
-
-연속적인 잠재 변수를 사용하여 효율적인 근사 추론을 수행하기 위해, 변분 하한(ELBO)의 새로운 추정량인 SGVB를 소개하였다. 이는 재매개변수화 방법을 사용해 ELBO를 계산하는 실용적인 방법으로 분산이 낮아서 안정적으로 학습이 가능하다. 이 추정량은 표준적인 확률적 경사 하강법을 사용해 간단히 미분되고 최적화될 수 있다. 독립 항등 분포 데이터셋과 데이터 포인트당 연속적인 잠재 변수가 있는 경우를 위해, SGVB 추정량을 사용하여 근사 추론 모델을 학습하는, 효율적인 추론 및 학습 알고리즘인 AEVB를 소개한다.
