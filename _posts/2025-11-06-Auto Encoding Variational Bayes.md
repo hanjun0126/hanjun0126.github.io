@@ -1,5 +1,5 @@
 ---
-categories: [paper]
+categories: [paper, other]
 description: VAE 정리
 tags: [공부]
 math: true

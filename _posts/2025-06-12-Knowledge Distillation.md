@@ -1,5 +1,5 @@
 ---
-categories: [paper]
+categories: [paper, other]
 description: Knowledge Distillation 논문 정리
 tags: [AI]
 math: true

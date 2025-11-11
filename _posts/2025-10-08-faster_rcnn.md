@@ -1,7 +1,7 @@
 ---
 categories: [paper, computer vision]
 description: Faster R-CNN 정리
-tags: [CV]
+tags: [논문 공부]
 math: true
 published: false
 ---
