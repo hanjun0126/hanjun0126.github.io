@@ -13,7 +13,7 @@ math: true
 
 <img src="../assets/img/VAE/abstract.png" alt="abstract" style="zoom:40%;" />
 
-## Abstract
+## **Abstract**
 
 >   How can we perform efficient inference and learning in directed probabilistic models, in the presence of continuous latent variables with intractable posterior distributions, and large datasets?
 >
@@ -89,9 +89,9 @@ $\theta^\ast$ 는 우리가 모르는, 세상을 완벽하게 설명하는 진�
 
 $$\log p_\theta(x^1,\cdots,x^N) = \sum_{i=1}^N\log p_\theta(x^i)$$
 
-데이터셋 전체가 나타날 확률 $p(X)$ 는 각 데이터가 독립적이라고 가정했기 때문에 $p(x^1)\times p(x^2)\times\cdots$ 이다. 로그를 씌우면 곱셈이 덧셈으로 바뀌기 때문에 식(1)을 만족한다. 우리의 최종 목표는 이 전체 로그 가능도를 최대화하는 것이다.
+데이터셋 전체가 나타날 확률 $p(X)$ 는 각 데이터가 독립적이라고 가정했기 때문에 $p(x^1)\times p(x^2)\times\cdots$ 이다. 로그를 씌우면 곱셈이 덧셈으로 바뀌게 된다. 우리의 최종 목표는 이 전체 로그 가능도를 최대화하는 것이다.
 
-$$\log p_\theta(x^i) = D_{KL}(q_\phi(z|x^i)||p_\theta(z|x^i))+\mathcal{L}(\theta,\phi;x^i)$$
+$$\log p_\theta(x^i) = D_{KL}(q_\phi(z|x^i)||p_\theta(z|x^i))+\mathcal{L}(\theta,\phi;x^i)\quad(1)$$
 
 $$\log p_\theta(x^i) = D_{KL}(\text{인코더}\|\text{실제 사후 분포})+\mathcal{L}(\text{ELBO})$$
 
@@ -121,7 +121,7 @@ $\mathbb E_{q}[\cdot]$ 는 $q$ 의 변수인 $z$ 에 대한 기댓값이다. $\l
 
 $$D_{KL}(q\Vert p) = \mathbb{E}_{q}[\log q(z\vert x) - \log p_{\theta}(x,z)] + \log p_{\theta}(x)$$
 
-이제 수식(6)을 $\log p_{\theta}(x)$에 대해 식을 정리하면 아래와 같다.
+이제 수식을 $\log p_{\theta}(x)$에 대해 식을 정리하면 아래와 같다.
 
 $$\log p_{\theta}(x) = D_{KL}(q\Vert p) - \mathbb{E}_{q}[\log q(z\vert x) - \log p_{\theta}(x, z)]$$
 
@@ -137,7 +137,7 @@ $\log p(x) = D_{KL} + \mathcal L$ 에서 $D_{KL}$ 은 0보다 크거나 같다. 
 
 $\text{ELBO}=\mathbb E_{q}[\log p_{\theta}(x,z) - \log q(z\vert x)]$ 의 식을 우리는 아래와 같이 재구성할 수 있다.
 
-$$\mathcal L(\theta, \phi; x^i) = -D_{KL}(q_{\phi}(z\vert x^i)\Vert p_{\theta}(z)) + \mathbb E_{q_{\phi}(z\vert x^i)}[\log p_{\theta}(x^i\vert z)]$$
+$$\mathcal L(\theta, \phi; x^i) = -D_{KL}(q_{\phi}(z\vert x^i)\Vert p_{\theta}(z)) + \mathbb E_{q_{\phi}(z\vert x^i)}[\log p_{\theta}(x^i\vert z)]\quad(2)$$
 
 $$\mathcal{L} = -D_{KL}(\text{인코더} || \text{사전 분포}) + \text{기대 재구성 손실}$$
 
@@ -161,13 +161,13 @@ $$\mathcal L =\mathbb E_q[\log p_\theta(z)-\log q(z\vert x)] +\mathbb E_q[\log p
 
 $$\mathcal L =-\mathbb E_q[\log q(z\vert x)-\log p_\theta(z)] +\mathbb E_q[\log p_\theta(x\vert z)]$$
 
-여기서 우변의 첫 번째 항은 $-D_{KL}(q\Vert p)$ 이므로, ELBO 식은 수식(9)와 같이 쓸 수 있다.
+여기서 우변의 첫 번째 항은 $-D_{KL}(q\Vert p)$ 이므로, ELBO 식은 수식(2)와 같이 쓸 수 있다.
 
 ---
 
 우리는 이 ELBO을 파라미터 인코더($\phi$) 와 디코더($\theta$) 둘 다에 대해 미분하고 최적화하기를 원한다. $\mathcal L$ 은 인코더와 디코더 모두에 의해 결정되므로 $\mathcal L$ 을 $\phi$ 로 미분해서 인코더를 업데이트하고, $\theta$ 로 미분해서 디코더를 업데이트해야 한다. 이 과정에서 사용되는 것이 경사 상승법이다. 다만 $\theta$ 에 대한 미분은 간단하지만 $\phi$ 에 대한 미분은 어렵다. 왜냐하면 미분하려는 파라미터 $\phi$ 가 샘플링($z\sim q_\phi(z\vert x)$) 을 수행하는 분포 자체에 들어있기 때문이다. 이런 문제에 대한 일반적인 몬테카를로 그래디언트 추정량은 다음과 같다.
 
-$$\nabla_{\phi} \mathbb{E}_{q_{\phi}(z)}[f(z)] = \mathbb{E}_{q_{\phi}(z)}[f(z)\nabla_{\phi} \log q_{\phi}(z)] \approx \frac{1}{L} \sum_{l=1}^L f(z)\nabla_{\phi} \log q_{\phi}(z^l)\quad \text{where}\quad z^l \sim q_{\phi}(z\vert x^i)$$
+$$\nabla_{\phi} \mathbb{E}_{q_{\phi}(z)}[f(z)] = \mathbb{E}_{q_{\phi}(z)}[f(z)\nabla_{\phi} \log q_{\phi}(z)] \approx \frac{1}{L} \sum_{l=1}^L f(z)\nabla_{\phi} \log q_{\phi}(z^l)\quad \text{where}\quad z^l \sim q_{\phi}(z\vert x^i)\quad(3)$$
 
 
 
@@ -187,7 +187,7 @@ $f(z)=\log p_\theta(x\vert z)$: 디코더가 $z$ 로 $x$ 를 얼마나 잘 복�
 
 이 끊어진 그래디언트를 수학적으로 연결해주는 방법이 바로 Log-Derivative 방법이다.
 
-$$\nabla_\phi\mathbb E_{q_\phi(z)}[f(z)]=\mathbb E_{q_\phi(z)}[f(z)\nabla_\phi\log q_\phi(z)]$$
+$$\nabla_\phi\mathbb E_{q_\phi(z)}[f(z)]=\mathbb E_{q_\phi(z)}[f(z)\nabla_\phi\log q_\phi(z)]]$$
 
 $$\nabla_\phi\mathbb E_{q_\phi(z)}[f(z)]=\int q_\phi(z)[f(z)\nabla_\phi\log q_\phi(z)]dz$$
 
@@ -197,9 +197,9 @@ $\nabla_\phi\log q_\phi(z)={1\over q_\phi(z)}\nabla_\phi q_\phi(z)$ 이므로, $
 
 즉, $\int(\nabla_\phi q_\phi(z))f(z)dz$ 는 $\int(q_\phi(z)\nabla_\phi\log q_\phi(z))f(z)dz$ 이고, 이를 기댓값 형태로 변형한다. 이렇게 수식을 유도하면 $\nabla$ 가 $\mathbb E[\cdots]$ 안으로 들어오므로 $\mathbb E_{q_{\phi}}[\text{어떤 값}]$ 을 $q_\phi$ 에서 $z$ 를 샘플링한 뒤, 어떤 값을 계산하여 평균하는 것으로 근사할 수 있게 된다.
 
-이제 우리는 그래디언트를 수식(15)와 같이 근사할 수 있다. 이것이 바로 몬테카를로 추정량이다. $L$ 개의 $z^l$ 을 인코더에서 뽑는다. 각 $z^l$ 에 대해 $f(z^l)$ 과 $\nabla_\phi\log q_{\phi}(z^l)$ 을 계산해서 곱한다. 이 값들을 평균낸 값이 $\phi$ 에 대한 그래디언트 신호로 사용하여 SGD로 인코더를 업데이트한다.
+이제 우리는 그래디언트를 수식(3)과 같이 근사할 수 있다. 이것이 바로 몬테카를로 추정량이다. $L$ 개의 $z^l$ 을 인코더에서 뽑는다. 각 $z^l$ 에 대해 $f(z^l)$ 과 $\nabla_\phi\log q_{\phi}(z^l)$ 을 계산해서 곱한다. 이 값들을 평균낸 값이 $\phi$ 에 대한 그래디언트 신호로 사용하여 SGD로 인코더를 업데이트한다.
 
-다만 이 추정량은 매우 높은 분산을 보이며 비실용적이다. 수식에서는 $f(z)$ 와 $\nabla_\phi\log q_{\phi}(z^l)$ 를 곱한다. $f(z)$ 는 복원 확률 $\nabla_\phi\log {q_\phi}(z)$ 는 민감도이다. 우리가 $\phi$ 에 대해서 미분을 하게 되면, $\log q_\phi(z)$ 의 값은 크게 바뀔 수 있다. 그렇기에 기울기가 폭발할 수 있다. 이런 문제를 해결하기 위한 것이 재매개변수화 기법이다.
+다만 이 추정량은 매우 높은 분산을 보이며 비실용적이다. 수식에서는 $f(z)$ 와 $\nabla_\phi\log q_{\phi}(z^l)$ 를 곱한다. $f(z)$ 는 복원 확률 $\nabla_\phi\log {q_\phi}(z)$ 는 민감도이다. 우리가 $\phi$ 에 대해서 미분을 하게 되면, $\log q_\phi(z)$ 의 값은 크게 바뀔 수 있다. 그렇기에 기울기가 폭발할 수 있다. 이런 문제를 해결하기 위한 것이 재매개변수화 방법이다.
 
 
 
@@ -213,7 +213,7 @@ $q_\phi(z\vert x)$ 가 정규분포 $\mathcal N(\mu, \sigma^2)$ 라고 가정해
 
 $$g_\phi(\epsilon, x) = \mu + \sigma\cdot\epsilon$$ 
 
-이고, 최종적으로 $z: \tilde z=\mu_\phi(x)+\sigma_\phi(x)\cdot\epsilon$ 이다. 보시다시피 $z$ 는 $\mu$ 와 $\sigma$ 를 따르는 정규분포가 되지만, $\phi$ 에서 $z$ 로 가는 그래디언트 경로는 $\mu_{\phi}$ 와 $\sigma_{\phi}$ 를 통해 $\epsilon$ 과의 덧셈/곱셈 연산으로 완전히 미분 가능해졌다. 따라서 몬테카를로 추정치를 다음과 같이 구성할 수 있다.
+이고, 최종적으로 $z: \tilde z=\mu_\phi(x)+\sigma_\phi(x)\cdot\epsilon$ 이다. 보시다시피 $z$ 는 $\mu$ 와 $\sigma$ 를 따르는 정규분포가 되지만, $\phi$ 에서 $z$ 로 가는 그래디언트 경로는 $\mu_{\phi}$ 와 $\sigma_{\phi}$ 를 통해 $\epsilon$ 과의 덧셈/곱셈 연산으로 완전히 미분 가능해졌다. 즉, 기존의 정규 분포에서 샘플링하는 과정이 표준 정규 분포를 이용하여 $z$ 를 구하는 과정으로 바뀐 것이다. 따라서 몬테카를로 추정치를 다음과 같이 구성할 수 있다.
 
 $$\mathbb E_{q\phi(z\vert x^i)}[f(z)]=\mathbb E_{p(\epsilon)}[f(g_\phi(\epsilon,x^i))]\simeq {1\over L}\sum_{l=1}^Lf(g_\phi(\epsilon^l,x^i))\quad \text{where}\quad \epsilon^l\sim p(\epsilon)$$
 
@@ -223,13 +223,13 @@ $$\mathbb E_{\mathcal N(z;\mu,\sigma^2)}[f(z)]=\mathbb E_{\mathcal N(\epsilon;0,
 
 $q_\phi$ 에 대한 기댓값은 $p_\epsilon$ 에 대한 기댓값으로 바뀌고, 이는 $p(\epsilon)$ 에서 $L$ 번 샘플링하여 평균을 내는 것으로 근사할 수 있다. 
 
-우리는 재매개변수화 기법을 ELBO에 적용하여, 우리의 일반적인 SGVB(Stochastic Gradient Variational Bayes) 추정량 $\mathcal {\tilde L}^A \approx \mathcal L$ 을 도출한다.
+우리는 재매개변수화 방법을 ELBO에 적용하여, 우리의 일반적인 SGVB 추정량 $\mathcal {\tilde L}^A \approx \mathcal L$ 을 도출한다.
 
 $$\mathcal{\tilde L}^A (\theta,\phi,x^i)={1\over L}\sum_{l=1}^L(\log p_\theta(x^i, z^{(i,l)})-\log q_\phi(z^{(i,l)}\vert x^i))$$
 
 $$\text{where}\quad z^{(i,l)}=g_\phi(\epsilon^{(i,l)}, x^i)\quad\text{and}\quad \epsilon^l\sim p(\epsilon)$$
 
-ELBO의 KL 항($-D_{KL}(q_\phi\Vert p_\theta)$) 은 해석적으로 적분(analytically integrate)될 수 있으므로, 샘플링을 통한 추정이 필요한 것은 기대 재구성 오차 항($\mathbb E_{q_\phi}[\log p_\theta(x\vert z)]$)뿐이다. 해석적으로 적분 될 수 있다는 것은, 수학 공식으로 한 번에 값을 계산할 수 있다는 의미이다. 인코더는 정규분포를 따른다고 가정했고, 사전 분포는 표준 정규분포를 따른다. 그러므로 가우시안 분포 두 개 사이의 KL-Divergence 는 아래 수식과 같다.
+ELBO의 KL 항($-D_{KL}(q_\phi\Vert p_\theta)$) 은 해석적으로 적분(analytically integrate)될 수 있으므로, 샘플링을 통한 추정이 필요한 것은 기대 재구성 오차 항($\mathbb E_{q_\phi}[\log p_\theta(x\vert z)]$)뿐이다. 해석적으로 적분 될 수 있다는 것은, 수학 공식으로 한 번에 값을 계산할 수 있다는 의미이다. 인코더는 정규 분포를 따른다고 가정했고, 사전 분포는 표준 정규 분포를 따른다. 그러므로 가우시안 분포 두 개 사이의 KL-Divergence 는 아래 수식과 같다.
 
 $$D_{KL}(\mathcal N(\mu, \sigma^2)\Vert \mathcal N(0,1)) = 0.5\times \sum(\sigma^2+\mu^2-1-\log(\sigma^2))$$ 
 
@@ -243,7 +243,9 @@ $$\text{where}\quad z^{(i,l)}=g_\phi(\epsilon^{(i,l)}, x^i)\quad\text{and}\quad 
 
 확률적인 부분이 절반으로 줄었기 때문에, $\epsilon$ 이 바뀔 때마다 값이 덜 흔들린다. 기본 방식보다 분산이 낮다.
 
-$$\mathcal {\tilde L}^B=-(\text{해석적 KL 항}) + (\text{샘플링된 재구성 항의 평균})$$
+$$\mathcal {\tilde L}^A=\text{[확률적 샘플링 항 1]}-\text{[확률적 샘플링 항 2]}$$
+
+$$\mathcal {\tilde L}^B=-[\text{해석적 KL 항}] + [\text{샘플링된 재구성 항의 평균}]$$
 
 재구성 항의 계산은 다음과 같다.
 
