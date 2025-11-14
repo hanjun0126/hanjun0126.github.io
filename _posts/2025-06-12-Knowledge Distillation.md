@@ -3,6 +3,7 @@ categories: [paper, other]
 description: Knowledge Distillation 논문 정리
 tags: [AI]
 math: true
+published: false
 ---
 
 Paper: [Distilling the Knowledge in a Neural Network][https://arxiv.org/pdf/1503.02531]
