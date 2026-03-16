@@ -1,6 +1,7 @@
 ---
 layout: page
-title: CV
+title: Hanjun KIM
+nav_title: "CV"
 permalink: /CV/
 ---
 
