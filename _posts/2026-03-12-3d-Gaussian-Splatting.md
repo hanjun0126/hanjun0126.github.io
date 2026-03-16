@@ -8,8 +8,6 @@ paper: "https://arxiv.org/pdf/2308.04079"
 
 장면을 anisotropic 3D Gaussian의 집합으로 표현하고 rasterization 기반 splatting 렌더링을 사용하여, NeRF와 비슷한 품질을 유지하면서도 훨씬 빠른 실시간 novel view synthesis를 가능하게 하는 방법을 제안한다.
 
-Paper: [3D Gaussian Splatting for Real-Time Radiance Field Rendering ](https://arxiv.org/pdf/2308.04079)
-
 논문에서는 장면을 anisotropic 3D Gaussian의 집합으로 표현하고 rasterization 기반 splatting 렌더링을 사용하여, NeRF와 비슷한 품질을 유지하면서도 훨씬 빠른 실시간 novel view synthesis를 가능하게 하는 방법을 제안한다.
 
 기존 neural rendering 방법의 대표적인 예는 NeRF다. NeRF는 장면을 하나의 함수로 표현하는 continuous radiance field 방식이다. 픽셀마다 ray를 쏘고 ray 위에서 여러 위치를 샘플링하여 density와 color를 계산한 뒤 이를 누적해 이미지를 만든다. 이 방법은 품질은 높지만 volumetric ray-marching을 사용하기 때문에 계산량이 매우 크다. 픽셀마다 많은 샘플을 계산해야 하므로 렌더링 속도가 느리고 실시간 처리가 어렵다.
