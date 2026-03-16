@@ -29,6 +29,13 @@ layout: base
         {% endfor %}
       </div>
       {%- endif %}
+
+      {%- if page.paper %}
+      <div class="post-paper">
+        <span class="meta-label">Paper:</span>
+        <a href="{{ page.paper }}" target="_blank" rel="noopener noreferrer">{{ page.title | escape }}</a>
+      </div>
+      {%- endif %}
     </div>
   </header>
 

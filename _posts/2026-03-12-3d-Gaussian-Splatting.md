@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "3D Gaussian Splatting\nfor Real-Time Radiance Field Rendering"
-author: Hanjun
 meta: "Springfield"
 modified_date: 2026-03-16
+paper: "https://arxiv.org/pdf/2308.04079"
 ---
 
 장면을 anisotropic 3D Gaussian의 집합으로 표현하고 rasterization 기반 splatting 렌더링을 사용하여, NeRF와 비슷한 품질을 유지하면서도 훨씬 빠른 실시간 novel view synthesis를 가능하게 하는 방법을 제안한다.
