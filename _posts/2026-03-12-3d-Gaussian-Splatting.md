@@ -27,7 +27,9 @@ Paper: [3D Gaussian Splatting for Real-Time Radiance Field Rendering](https://ar
 
 3D Gaussian Splatting이란 SfM으로 얻은 sparse point cloud를 기반으로 3D Gaussian들을 생성하고, position, covariance, opacity, color 파라미터를 최적화하여 radiance field를 학습하며, tile-based rasterization과 $\alpha$-blending을 이용해 매우 빠르게 장면을 렌더링한다. 최적화 과정에서는 파라미터를 업데이트하면서 동시에 Gaussian density를 적응하면서 조절한다.
 
-<img src="../assets/3DVision/fig2.png" alt="fig2" style="zoom:70%;" />
+<img src="../assets/3DVision/fig2.png" alt="fig2" style="zoom:50%;" />
+
+
 
 ### 3D Gaussian Splatting
 
