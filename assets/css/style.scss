@@ -38,38 +38,95 @@ body {
   }
 }
 
+/* Header Center Logic (Search & Title) */
+.header-center-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  max-width: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  z-index: 10;
+
+  @media screen and (max-width: 600px) {
+    width: 45%; // Smaller on mobile to avoid menu overlap
+  }
+}
+
 /* Search Interface Styles */
 .search-container {
-  display: inline-block;
-  margin-bottom: 20px;
+  display: block;
   width: 100%;
-  max-width: 400px;
+  pointer-events: auto;
 }
 
-#search-input {
-  width: 100%;
-  padding: 10px 15px;
-  font-size: 16px;
-  border: 1px solid #eaeaea;
-  border-radius: 4px;
-  background-color: #fafafa;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  
-  &:focus {
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #e1e4e8;
+  border-radius: 0;
+  padding: 2px 4px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: none;
+
+  &:focus-within {
+    border-bottom-color: #2a7ae2;
+    border-bottom-width: 1.5px;
+  }
+
+  #search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 6px 0;
+    font-size: 14px;
+    color: #24292e;
     outline: none;
-    border-color: #2a7ae2; /* Matches the theme blue */
-    box-shadow: 0 0 5px rgba(42, 122, 226, 0.2);
+    text-align: center; // Center text as well for symmetry
+
+    &::placeholder {
+      color: #959da5;
+    }
   }
-  &:disabled {
-    background-color: #f5f5f5;
-    color: #999;
+
+  #search-clear {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #959da5;
+    cursor: pointer;
+    line-height: 1;
   }
 }
 
-.no-results {
-  color: #828282;
-  font-style: italic;
-  padding: 10px 0;
+#header-post-title {
+  position: absolute;
+  font-weight: 500;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #111;
+  
+  // Transitions for post pages
+  opacity: 0;
+  transform: translateY(20%);
+  transition: all 0.3s ease;
+  pointer-events: none;
+
+  body.title-visible & {
+    opacity: 1;
+    transform: translateY(4px); // Lowered further for optical centering
+    pointer-events: auto;
+  }
 }
 
 /* Custom styles for right sidebar TOC */
@@ -82,6 +139,112 @@ body {
 
 .post-content {
   width: 100%;
+  text-align: justify;
+  word-break: keep-all; // Prevents breaking Korean words in middle
+  overflow-wrap: break-word; // Allows long English words to break if needed
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Gujarati MT", serif;
+    text-align: center;
+  }
+
+  blockquote {
+    border-left: none;
+    text-align: center;
+    margin: 2rem 0;
+    padding: 0;
+    color: #6a737d;
+    font-style: italic;
+  }
+}
+
+// Typography for Titles (on detail pages and header)
+.post-title, 
+.site-title,
+.nav-item,
+#header-post-title,
+.post-toc h4,
+.toc-list a {
+  font-family: "Gujarati MT", serif;
+}
+
+.post-title {
+  text-align: center;
+}
+
+.post-meta {
+  text-align: center;
+}
+
+.site-title {
+  display: inline-block;
+  transform: translateY(6px); // Lowered more
+}
+
+.nav-item {
+  display: inline-block;
+  transform: translateY(1px); // Raised up
+}
+
+// CV Specific Style Overrides
+.cv-content {
+  .post-title {
+    text-align: center;
+  }
+}
+
+.cv-content {
+  .post-content {
+    font-family: "Gujarati MT", serif;
+    text-align: left; // Reset from justify if needed
+
+    h1, h2, h3, h4, h5, h6 {
+      text-align: left;
+    }
+  }
+
+  .post-content {
+    h3 {
+      border-bottom: 1px solid #e1e4e8;
+      padding-bottom: 0;
+      margin-bottom: 15px;
+      line-height: 1;
+    }
+
+    .cv-date {
+      float: right;
+      display: inline-grid;
+      grid-template-columns: 75px 15px 75px; // Reduced width slightly to prevent wrapping
+      white-space: nowrap;
+      font-size: 0.85em;
+      color: #828282;
+      font-weight: normal;
+      line-height: inherit; // Ensure it matches the line height of the text it's on
+
+      span:first-child {
+        text-align: right;
+      }
+      span:nth-child(2) {
+        text-align: center;
+        opacity: 0.7;
+      }
+      span:last-child {
+        text-align: left;
+      }
+    }
+
+    p {
+      margin-bottom: 1.2rem;
+      line-height: 1.5;
+    }
+
+    .cv-org {
+      font-weight: bold;
+      font-size: 1.1em;
+      display: inline-block;
+      margin-bottom: 2px;
+    }
+  }
 }
 
 .post-sidebar {
@@ -122,23 +285,29 @@ body {
 
     ul {
       list-style: none;
-      padding-left: 0.5rem; /* Tiny indent */
-      margin-left: 0.2rem;
-      border-left: 1px solid #eaeaea;
-      margin-top: 0.3rem;
+      padding-left: 1.2rem; /* Clean indentation without line */
+      margin-left: 0;
+      border-left: none; /* Removed the vertical line as requested */
+      margin-top: 0.1rem;
       display: none; /* Hidden by default */
       
-      @media (prefers-color-scheme: dark) {
-        border-color: #444;
-      }
-      
       li {
-        font-size: 0.95em; /* Slightly smaller text for sub-items */
+        font-size: 0.92em;
+        position: relative;
+        margin-bottom: 0.15rem; // Tighter sub-items
+        
+        &::before {
+          content: "·"; /* Subtle dot indicator */
+          position: absolute;
+          left: -0.8rem;
+          opacity: 0.4;
+          font-weight: bold;
+        }
       }
     }
 
     li {
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.2rem;
       
       &.active > ul {
         display: block; /* Show sub-items when active */

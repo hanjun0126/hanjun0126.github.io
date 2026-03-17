@@ -16,5 +16,18 @@
         {% include nav-items.html paths = page_paths %}
       </nav>
     {%- endunless %}
+    
+    <div class="header-center-container">
+      {%- if page.layout == 'home' -%}
+      <div class="search-container">
+        <div class="search-wrapper">
+          <input type="text" id="search-input" placeholder="Loading search..." disabled>
+          <button id="search-clear" style="display: none;">&times;</button>
+        </div>
+      </div>
+      {%- endif -%}
+      <span id="header-post-title"></span>
+    </div>
   </div>
 </header>
+<script src="{{ '/assets/search.js' | relative_url }}"></script>

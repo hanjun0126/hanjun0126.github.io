@@ -2,8 +2,9 @@
 document.addEventListener("DOMContentLoaded", function() {
   const searchInput = document.getElementById('search-input');
   const searchResults = document.getElementById('search-results');
-  const postListContainer = document.querySelector('.post-list').parentNode; // To hide/show default list
-  const defaultPostList = document.querySelector('.post-list');
+  const defaultPostList = document.getElementById('default-post-list');
+  const paginationContainer = document.getElementById('pagination-container');
+  const searchClear = document.getElementById('search-clear');
 
   if (!searchInput || !searchResults) return;
 
@@ -26,17 +27,31 @@ document.addEventListener("DOMContentLoaded", function() {
   searchInput.addEventListener('input', function() {
     const query = this.value.toLowerCase().trim();
     
+    // Toggle clear button
+    if (searchClear) {
+      searchClear.style.display = query !== '' ? 'block' : 'none';
+    }
+
     // Clear results
-    searchResults.innerHTML = '';
+    if (searchResults) searchResults.innerHTML = '';
     
+    // Only show results on the home page where the container exists
+    if (!defaultPostList && query !== '') {
+      // If we are not on home, we might want to redirect to home with a query param
+      // but for now, let's just do nothing or hide result container
+      return;
+    }
+
     if (query === '') {
       searchResults.style.display = 'none';
       if(defaultPostList) defaultPostList.style.display = 'block';
+      if(paginationContainer) paginationContainer.style.display = 'block';
       return;
     }
 
     // Hide default post list while searching
     if(defaultPostList) defaultPostList.style.display = 'none';
+    if(paginationContainer) paginationContainer.style.display = 'none';
     searchResults.style.display = 'block';
 
     // Filter posts
@@ -62,4 +77,12 @@ document.addEventListener("DOMContentLoaded", function() {
       searchResults.appendChild(li);
     });
   });
+
+  if (searchClear) {
+    searchClear.addEventListener('click', function() {
+      searchInput.value = '';
+      searchInput.dispatchEvent(new Event('input'));
+      searchInput.focus();
+    });
+  }
 });

@@ -5,13 +5,12 @@ nav_title: "CV"
 permalink: /CV/
 email: "hanjun0126@hanyang.ac.kr"
 github: "https://github.com/hanjun0126"
+class: cv-content
 ---
 
 
 
 ### Research Interest
-
----
 
 My main research interests are 3D Vision, Vision-Language Models (VLMs), and Image Generation. The main problems I aim to address are as follows:
 
@@ -23,19 +22,41 @@ My main research interests are 3D Vision, Vision-Language Models (VLMs), and Ima
 
 ### Education
 
----
+<span class="cv-org">Hanyang University at Ansan</span><br>
+[B.S.] Department of Robotics, College of Engineering(GPA: 3.63/4.5) <span class="cv-date">Mar 2020 - Present</span>
 
-Hanyang University at Ansan
-
-[B.S.] Department of Robotics, College of Engineering(GPA: 3.63/4.5) Mar 2020 - Present
-
-Naver Connect Foundation boostcamp AI Tech
-
-Computer Vision Track Set 2025 - Feb 2026
+<span class="cv-org">Naver Connect Foundation boostcamp AI Tech</span><br>
+Computer Vision Track <span class="cv-date">Set 2025 - Feb 2026</span>
 
 
 
 
 
 ### Publication
+
+
+
+
+
+
+
+### Project
+
+
+
+
+
+### Internship
+
+
+
+
+
+### Skills
+
+
+
+
+
+
 
