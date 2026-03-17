@@ -39,8 +39,18 @@ layout: base
     </div>
   </header>
 
-  <div class="post-content e-content" itemprop="articleBody">
-    {{ content }}
+  <div class="post-container">
+    <div class="post-content e-content" itemprop="articleBody">
+      {{ content }}
+    </div>
+
+    <!-- Table of Contents Sidebar -->
+    <aside class="post-sidebar">
+      <div class="post-toc">
+        <h4>Table of Contents</h4>
+        {% include toc.html html=content %}
+      </div>
+    </aside>
   </div>
 
   {% if jekyll.environment == 'production' -%}
@@ -55,3 +65,5 @@ layout: base
 
   <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
 </article>
+
+<script src="{{ '/assets/toc-scrollspy.js' | relative_url }}"></script>

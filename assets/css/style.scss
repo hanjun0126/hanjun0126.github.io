@@ -5,3 +5,168 @@
 @import
   "minima/skins/{{ site.minima.skin | default: 'classic' }}",
   "minima/initialize";
+
+/* Fix Safari overscroll background color and lock to light mode */
+html, body {
+  background-color: #ffffff;
+  overscroll-behavior: none; /* Disables Mac/iOS Safari rubber-band bouncing */
+}
+
+body {
+  padding-top: 56px; /* Offset for the fixed header */
+}
+
+.site-header {
+  border-top: none;
+  background-color: #ffffff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  border-bottom: 1px solid #eaeaea; /* Adds separation when scrolling */
+}
+
+/* Ensure post-meta links (like email/github) have consistent color regardless of visited history */
+.post-meta {
+  a, a:visited {
+    color: inherit;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Search Interface Styles */
+.search-container {
+  display: inline-block;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+#search-input {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 1px solid #eaeaea;
+  border-radius: 4px;
+  background-color: #fafafa;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  
+  &:focus {
+    outline: none;
+    border-color: #2a7ae2; /* Matches the theme blue */
+    box-shadow: 0 0 5px rgba(42, 122, 226, 0.2);
+  }
+  &:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+  }
+}
+
+.no-results {
+  color: #828282;
+  font-style: italic;
+  padding: 10px 0;
+}
+
+/* Custom styles for right sidebar TOC */
+.post-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative; /* Anchor for absolute sidebar */
+}
+
+.post-content {
+  width: 100%;
+}
+
+.post-sidebar {
+  @media screen and (min-width: 1350px) {
+    position: absolute;
+    left: calc(100% + 2rem);
+    top: 0;
+    bottom: 0; /* Stretch to track the scrolling height of the post */
+    width: 280px; /* Slightly wider */
+  }
+}
+
+.post-toc {
+  font-size: 0.9em;
+
+  h4 {
+    margin-top: 0;
+    margin-bottom: 0.8rem;
+    font-size: 1.1em;
+    color: inherit;
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Sticky behavior on wide screens */
+  @media screen and (min-width: 1350px) {
+    position: sticky;
+    top: calc(56px + 2rem); /* Account for fixed header height */
+    max-height: calc(100vh - 56px - 4rem);
+    overflow-y: auto;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+
+    ul {
+      list-style: none;
+      padding-left: 0.5rem; /* Tiny indent */
+      margin-left: 0.2rem;
+      border-left: 1px solid #eaeaea;
+      margin-top: 0.3rem;
+      display: none; /* Hidden by default */
+      
+      @media (prefers-color-scheme: dark) {
+        border-color: #444;
+      }
+      
+      li {
+        font-size: 0.95em; /* Slightly smaller text for sub-items */
+      }
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+      
+      &.active > ul {
+        display: block; /* Show sub-items when active */
+      }
+      &.active > a {
+        font-weight: bold;
+        opacity: 1;
+        color: #2a7ae2; /* Highlight color */
+      }
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+
+      &:hover {
+        text-decoration: underline;
+        opacity: 1;
+      }
+    }
+  }
+}
+
+/* Widen the wrapper on posts to accommodate the sidebar seamlessly */
+// .post-container {
+//   /* We allow it to expand out if needed depending on wrapper width */
+// }
+// Note: You may need to review .wrapper max-width if it becomes too constrained.
+

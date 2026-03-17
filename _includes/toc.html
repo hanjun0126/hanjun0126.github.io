@@ -1,0 +1,55 @@
+{% capture tocWorkspace %}
+{% comment %}
+  A pure liquid table of contents generating script.
+{% endcomment %}
+
+{% assign my_min = include.h_min | default: 1 %}
+{% assign my_max = include.h_max | default: 3 %}
+
+{% assign html = include.html | split: "<h" %}
+
+{% assign first_heading = true %}
+{% assign previous_level = 0 %}
+
+{% for item in html %}
+  {% if item != "" %}
+    {% assign header_level = item | slice: 0, 1 | plus: 0 %}
+
+    {% if header_level >= my_min and header_level <= my_max %}
+      {% assign heading_tag = item | split: ">" | first %}
+      {% assign id_parts = heading_tag | split: 'id="' %}
+      {% assign item_id = id_parts[1] | split: '"' | first %}
+
+      {% assign item_title_parts = item | split: ">" %}
+      {% assign item_title = item_title_parts[1] | split: "</h" | first | strip_html | strip %}
+
+      {% if first_heading %}
+        {% assign previous_level = header_level %}
+        {% assign first_heading = false %}
+      {% else %}
+        {% if header_level > previous_level %}
+          {% assign levels_down = header_level | minus: previous_level %}
+          {% for i in (1..levels_down) %}<ul>{% endfor %}
+        {% elsif header_level < previous_level %}
+          {% assign levels_up = previous_level | minus: header_level %}
+          {% for i in (1..levels_up) %}</ul></li>{% endfor %}
+          </li>
+        {% else %}
+          </li>
+        {% endif %}
+        {% assign previous_level = header_level %}
+      {% endif %}
+
+      <li><a href="#{{ item_id }}">{{ item_title }}</a>
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% if first_heading == false %}
+  {% for i in (my_min..previous_level) %}
+    {% if i != previous_level %}</ul></li>{% else %}</li>{% endif %}
+  {% endfor %}
+{% endif %}
+
+{% endcapture %}
+<ul class="toc-list">{{ tocWorkspace }}</ul>
