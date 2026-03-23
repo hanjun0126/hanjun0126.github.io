@@ -409,10 +409,42 @@
 
 
 /**
- * Grid helpers
+ * Post Tags & Filters
  */
-@media screen and (min-width: $on-large) {
-  .one-half {
-    width: calc(50% - (#{$spacing-unit} / 2));
+.tag-filter-btn {
+  background: none;
+  border: 1px solid $border-color-01;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9em;
+  color: $brand-color-dimmed;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $brand-color-dimmed;
+    color: $text-color;
+  }
+
+  &.active {
+    background-color: $brand-color-dimmed;
+    color: white;
+    border-color: $brand-color-dimmed;
   }
 }
+
+.post-tag-badge {
+  font-size: 0.75em;
+  background-color: rgba($brand-color-dimmed, 0.1);
+  color: $brand-color-dimmed;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.post-tags-inline {
+  display: flex;
+  gap: 5px;
+}
+

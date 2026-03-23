@@ -4,6 +4,7 @@ title: "An Object is Worth 64x64 Pixels:\nGenerating 3D Object via Image Diffusi
 meta: "Springfield"
 modified_date: 2026-03-16
 paper: "https://arxiv.org/pdf/2408.03178"
+tags: [paper]
 ---
 
 3D object를 64×64 이미지로 표현하고, diffusion 모델로 그 이미지를 생성하여 3D object를 생성하는 방법을 제안한다.
@@ -129,7 +130,7 @@ Object Image(omage) 표현의 수학적 정의 그리고 이미지 기반 생성
 
 ### Object Images
 
-우리는 3D 객체 $\mathcal M$ 전체를 겹치지 않는 $N$ 개의 surface patches {$S_i$} 로 나눌 수 있다. 패치끼리는 내부에서 겹치지 않고 경계에서 만난다($S_i\cap S_j =\partial S_i \cap \partial S_j$). 각 $S_i$ 에는 injective이므로 서로 다른 3D 점은 서로 다른 UV좌표로 매핑된다.
+3D 객체 $\mathcal M$ 전체를 겹치지 않는 $N$ 개의 surface patches {$S_i$} 로 나눈다. 패치끼리는 내부에서 겹치지 않고 경계에서 만난다($S_i\cap S_j =\partial S_i \cap \partial S_j$). 각 $S_i$ 를 겹치지 않게 2D로 펼친다. 
 
 $$f_i: S_i\rightarrow[0,1]^2,\text{where }f_i(p)=(u,v)\text{ and } [0,1]^2\text{ is the UV-space}$$
 
@@ -139,7 +140,7 @@ $$\alpha(u,v)=\begin{cases}1 & \text{if } \exists i \text{ such that } (u,v) \in
 
 $\alpha$ 가 1이면 이 좌표는 실제 3D 표면에 대응되고, 0이면 빈 공간을 의미한다. 
 
-Position $\pi$ 는 UV 공간의 각 픽셀을 3D 좌표로 대응시키는 함수로, omage가 단순 이미지가 아니라 3D를 복원 가능한 표현임을 보장한다.
+$\pi$ 는 UV 공간의 각 픽셀을 3D 좌표로 대응시키는 함수로, omage가 단순 이미지가 아니라 3D를 복원 가능한 표현임을 보장한다.
 
 $$\pi(u,v)=\begin{cases} f_i^{-1}(u,v) & \text{if } (u,v)\in f_i(S_i) \\\text{undefined} & \text{otherwise}\end{cases}$$
 
