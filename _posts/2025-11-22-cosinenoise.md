@@ -12,7 +12,7 @@ modified_date: 2026-03-23
 
 paper: [Improved Denoising Diffusion Probabilistic Models](https://arxiv.org/pdf/2102.09672)
 
-<img src="../assets/post/post5/cosine_noise.png"/>
+<img src="../assets/post/math/cosine_noise.png"/>
 
 해당 논문 전체를 보고 공부한 것이 아니기에, 부족한 내용은 논문에서 참고하면 된다.
 
