@@ -6,6 +6,31 @@
   margin: 0 auto;
 }
 
+.post-content {
+  mjx-container[display="true"] {
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    padding: 10px 0;
+
+    /* 스크롤바 스타일링 */
+    scrollbar-width: thin; /* Firefox */
+    
+    &::-webkit-scrollbar {
+      height: 3px; /* 스크롤바 높이 3px */
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.03); /* 투명도 0.03 */
+      border-radius: 10px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  }
+}
+
 .post-paper {
   margin-top: 10px;
 }
