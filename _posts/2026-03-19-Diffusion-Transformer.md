@@ -2,7 +2,7 @@
 layout: post
 title: "Scalable Diffusion Models with Transformers"
 meta: "Springfield"
-modified_date: 2026-03-19
+modified_date: "not complete"
 paper: "https://arxiv.org/pdf/2212.09748"
 tags: [paper]
 ---

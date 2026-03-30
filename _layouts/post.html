@@ -15,10 +15,14 @@ layout: base
       {%- if page.modified_date -%}
       <span class="bullet-divider">•</span>
       <span class="meta-label">Updated:</span>
-      {%- assign mdate = page.modified_date | date_to_xmlschema %}
-      <time class="dt-modified" datetime="{{ mdate }}" itemprop="dateModified">
-        {{ mdate | date: date_format }}
-      </time>
+      {%- if page.modified_date == "not complete" -%}
+        <span class="status-incomplete-badge">Writing...</span>
+      {%- else -%}
+        {%- assign mdate = page.modified_date | date_to_xmlschema %}
+        <time class="dt-modified" datetime="{{ mdate }}" itemprop="dateModified">
+          {{ mdate | date: date_format }}
+        </time>
+      {%- endif -%}
       {%- endif -%}
       {%- if page.author %}
       <div class="{% unless page.modified_date %}force-inline {% endunless %}post-authors">

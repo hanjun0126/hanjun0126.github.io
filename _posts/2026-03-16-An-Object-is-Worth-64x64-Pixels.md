@@ -2,7 +2,7 @@
 layout: post
 title: "An Object is Worth 64x64 Pixels:\nGenerating 3D Object via Image Diffusion"
 meta: "Springfield"
-modified_date: 2026-03-16
+modified_date: "not complete"
 paper: "https://arxiv.org/pdf/2408.03178"
 tags: [paper]
 ---

@@ -53,6 +53,9 @@ layout: base
             {% endfor %}
           </div>
         {% endif %}
+        {% if post.modified_date == "not complete" %}
+          <span class="status-incomplete-badge">Writing...</span>
+        {% endif %}
         <span class="post-meta">{{ post.date | date: date_format }}</span>
       </div>
       <h3>

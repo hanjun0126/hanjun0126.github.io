@@ -2,7 +2,7 @@
 layout: post
 title: "3D Gaussian Splatting\nfor Real-Time Radiance Field Rendering"
 meta: "Springfield"
-modified_date: 2026-03-16
+modified_date: "not complete"
 paper: "https://arxiv.org/pdf/2308.04079"
 tags: [paper]
 ---
