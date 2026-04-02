@@ -2,7 +2,7 @@
 layout: post
 title: "Scalable Diffusion Models with Transformers"
 meta: "Springfield"
-modified_date: "not complete"
+modified_date: "2026-04-02"
 paper: "https://arxiv.org/pdf/2212.09748"
 tags: [paper]
 ---
@@ -169,7 +169,7 @@ $$x + \alpha \cdot F(x) \approx x$$
 
 
 
-즉, 학습 초기에는 F(x)의 영향이 거의 없어 블록 전체가 identity처럼 동작하고, 학습이 진행되면서 \alpha가 점차 커지면서 점진적으로 복잡한 변환을 학습하게 된다. 이 방식은 깊은 네트워크에서 발생할 수 있는 불안정성을 줄이고, gradient 흐름을 안정적으로 유지하는 데 중요한 역할을 한다.
+즉, 학습 초기에는 $F(x)$의 영향이 거의 없어 블록 전체가 identity처럼 동작하고, 학습이 진행되면서 $\alpha$가 점차 커지면서 점진적으로 복잡한 변환을 학습하게 된다. 이 방식은 깊은 네트워크에서 발생할 수 있는 불안정성을 줄이고, gradient 흐름을 안정적으로 유지하는 데 중요한 역할을 한다.
 
 
 
