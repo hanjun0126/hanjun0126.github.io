@@ -2,14 +2,12 @@
 layout: post
 title: "3D Gaussian Splatting\nfor Real-Time Radiance Field Rendering"
 meta: "Springfield"
-modified_date: "not complete"
+modified_date: "2026-04-12"
 paper: "https://arxiv.org/pdf/2308.04079"
 tags: [paper]
 ---
 
 장면을 anisotropic 3D Gaussian의 집합으로 표현하고 rasterization 기반 splatting 렌더링을 사용하여, NeRF와 비슷한 품질을 유지하면서도 훨씬 빠른 실시간 novel view synthesis를 가능하게 하는 방법을 제안한다.
-
-논문에서는 장면을 anisotropic 3D Gaussian의 집합으로 표현하고 rasterization 기반 splatting 렌더링을 사용하여, NeRF와 비슷한 품질을 유지하면서도 훨씬 빠른 실시간 novel view synthesis를 가능하게 하는 방법을 제안한다.
 
 기존 neural rendering 방법의 대표적인 예는 NeRF다. NeRF는 장면을 하나의 함수로 표현하는 continuous radiance field 방식이다. 픽셀마다 ray를 쏘고 ray 위에서 여러 위치를 샘플링하여 density와 color를 계산한 뒤 이를 누적해 이미지를 만든다. 이 방법은 품질은 높지만 volumetric ray-marching을 사용하기 때문에 계산량이 매우 크다. 픽셀마다 많은 샘플을 계산해야 하므로 렌더링 속도가 느리고 실시간 처리가 어렵다.
 
@@ -38,7 +36,7 @@ tags: [paper]
 
 
 
-$$G(x)=e^{-{1\over2}(x)^T\Sigma^{-1}(X)}$$
+$$G(x)=e^{-{1\over2}(x)^T\Sigma^{-1}(x)}$$
 
 
 
@@ -104,7 +102,7 @@ $$\Sigma = R S S^T R^T$$
 
 $$S= \begin{bmatrix} s_x & 0 & 0\\ 0 & s_y & 0\\ 0 & 0 & s_z \end{bmatrix}$$
 
-이면, 아직 회전하지 않은 Gaussian은 $x,\ y,\ z$ 축에 정렬된 타원체 모양을 갖는다. 이때 축별 퍼짐은 $s_x,\ s_y,\ s_z$ 로 정해지고, 공분산 역할을 하는 축정렬 행렬은 $SS^T$ 가 된다. $S$ 가 대각행렬이면 사실 $SS^T$는 $\text{diag}(s_x^2,s_y^z,s_z^2)$ 와 같아서, 각 축 방향 분산을 담는 형태가 된다.
+이면, 아직 회전하지 않은 Gaussian은 $x,\ y,\ z$ 축에 정렬된 타원체 모양을 갖는다. 이때 축별 퍼짐은 $s_x,\ s_y,\ s_z$ 로 정해지고, 공분산 역할을 하는 축정렬 행렬은 $SS^T$ 가 된다. $S$ 가 대각행렬이면 사실 $SS^T$는 $\text{diag}(s_x^2,s_y^2,s_z^2)$ 와 같아서, 각 축 방향 분산을 담는 형태가 된다.
 
 그 다음 $R$ 을 곱하는 이유는 실제 Gaussian이 꼭 좌표축에 맞춰져 있지 않기 때문이다. 장면의 벽, 기둥, 경사면 같은 구조는 임의 방향을 가지므로, 축정렬 타원체를 공간에서 회전시켜야 한다. 따라서 $R$ 로 선형변환한 $SS^T$ 는 $\Sigma=RSS^TR^T$ 가 된다. 
 
